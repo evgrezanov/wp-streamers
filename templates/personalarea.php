@@ -1,6 +1,6 @@
 <?php
 $img = UPPY_AVATAR::get_streamer_avatar(get_current_user_id(), 'tumbnail');
-$data = get_userdata(get_current_user_id());
+$user = get_userdata(get_current_user_id());
 ?>
 <div class="container">
     <div class="row">
@@ -22,14 +22,16 @@ $data = get_userdata(get_current_user_id());
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="firstName">First name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                        <input type="text" class="form-control" id="firstName" placeholder=""
+                            value="<?=$user->user_firstname?>" required>
                         <div class="invalid-feedback">
                             Valid first name is required.
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="lastName">Last name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                        <input type="text" class="form-control" id="lastName" placeholder=""
+                            value="<?=$user->user_lastname?>" required>
                         <div class="invalid-feedback">
                             Valid last name is required.
                         </div>
@@ -37,12 +39,13 @@ $data = get_userdata(get_current_user_id());
                 </div>
 
                 <div class="mb-3">
-                    <label for="username">Username</label>
+                    <label for="username">Nickname</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">@</span>
                         </div>
-                        <input type="text" class="form-control" id="username" placeholder="Username" required>
+                        <input type="text" class="form-control" id="username" value="<?=$user->nickname?>"
+                            placeholder="Username" required>
                         <div class="invalid-feedback" style="width: 100%;">
                             Your username is required.
                         </div>
@@ -51,7 +54,8 @@ $data = get_userdata(get_current_user_id());
 
                 <div class="mb-3">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="you@example.com">
+                    <input type="email" class="form-control" id="email" value="<?=$user->user_email?>"
+                        placeholder="you@example.com">
                     <div class="invalid-feedback">
                         Please enter a valid email address for shipping updates.
                     </div>
@@ -60,7 +64,8 @@ $data = get_userdata(get_current_user_id());
                 <div class="mb-3">
                     <div class="form-group">
                         <label for="streamer-bio">Short Bio</label>
-                        <textarea class="form-control" id="streamer-bio" rows="3"></textarea>
+                        <textarea class="form-control" id="streamer-bio"
+                            rows="3"><?=$user->user_description?></textarea>
                     </div>
                 </div>
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
