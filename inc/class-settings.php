@@ -59,7 +59,6 @@ class WP_STREAMER_SETTINGS {
 
     require_once plugin_dir_path(__DIR__).'templates/personal-data.php';
 
-    //require_once plugin_dir_path(__DIR__).'templates/login-fields.php';
   }
 
 
@@ -278,10 +277,7 @@ class WP_STREAMER_SETTINGS {
       return ob_get_clean();
     }
 
-
-    //self::$usermeta = get_user_meta($current_user_id);
-
-    require_once plugin_dir_path(__DIR__).'templates/personal-data.php';
+    require_once plugin_dir_path(__DIR__).'templates/personalarea.php';
 
     return ob_get_clean();
   }

@@ -27,6 +27,10 @@ class UPPY_AVATAR {
 		wp_enqueue_style(
             'uppy-styles', 
             WP_STREAMERS_URL . 'asset/uppy.min.css'
+		);
+		wp_enqueue_style(
+            'bootstrap-new', 
+            WP_STREAMERS_URL . 'asset/bootstrap.min.css'
         );
 	}
 

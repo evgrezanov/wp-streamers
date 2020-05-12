@@ -35,6 +35,9 @@ class WP_STREAMERS {
         // require uppy avatar for streamer
         require_once('inc/class-settings.php');
 
+        // require signup form for streamer
+        //require_once('inc/class-signup.php');
+
         // add Streamers role based subscribers role capabilities
         register_activation_hook( __FILE__, function(){
             $subscriber = get_role('subscriber');
