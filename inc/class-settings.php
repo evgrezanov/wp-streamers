@@ -8,9 +8,9 @@ class WP_STREAMER_SETTINGS {
 
   public static function init(){
 
-    add_shortcode( 'streamer-settings', [__CLASS__, 'display_sc_settings'] );
+    add_shortcode('streamer-settings', [__CLASS__, 'display_sc_settings']);
 
-    add_action( 'init', [__CLASS__, 'save_form'] );
+    add_action('init', [__CLASS__, 'save_form'] );
 
     add_action('sb_account_settings_save', [__CLASS__, 'save_personal_data'], 10, 2);
 

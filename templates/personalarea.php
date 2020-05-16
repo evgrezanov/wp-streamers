@@ -4,7 +4,7 @@ $user = get_userdata(get_current_user_id());
 ?>
 <div class="container">
     <div class="row">
-
+        <!-- avatar upload-->
         <div class="col-md-4 order-md-1 mb-4">
             <div class="wp-streamers-photo">
                 <div class="streamer_avatar">
@@ -17,8 +17,8 @@ $user = get_userdata(get_current_user_id());
             </div>
         </div>
 
+        <!--personal data-->
         <div class="col-md-8 order-md-2">
-            <!--personal data-->
             <form class="needs-validation" novalidate>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -72,5 +72,6 @@ $user = get_userdata(get_current_user_id());
                 <button class="btn btn-primary btn-lg btn-block" type="submit">Save</button>
             </form>
         </div>
+
     </div>
 </div>
