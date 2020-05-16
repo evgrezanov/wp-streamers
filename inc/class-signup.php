@@ -14,7 +14,15 @@ class WP_STREAMER_SIGNUP {
 
   public static function signup(){
     ob_start();
-    require_once plugin_dir_path(__DIR__).'templates/signup.php';
+    if ( get_option( 'users_can_register' ) ) :
+      if ( !is_user_logged_in() ):
+        require_once plugin_dir_path(__DIR__).'templates/signup.php';
+      else:  
+        echo __('You already register','wp-streamers');
+      endif;
+    else:
+        echo __('Registration is disabled!','wp-streamers');
+    endif;
     return ob_get_clean();
   }
 
