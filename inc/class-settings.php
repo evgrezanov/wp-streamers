@@ -10,7 +10,7 @@ class WP_STREAMER_SETTINGS {
     add_shortcode('streamer_personal_area', [__CLASS__, 'personal_area']);
     add_action('streamer_save_date', [__CLASS__, 'save_data']);
     add_action('display_notice', [__CLASS__, 'notice']);
-    add_action('init', [__CLASS__, 'save_form']);
+    add_action('init', [__CLASS__, 'save_settings_form']);
 }
 
 public static function personal_area(){
@@ -29,15 +29,15 @@ public static function personal_area(){
   return ob_get_clean();
 }
 
-public static function save_form(){
+public static function save_settings_form(){
   if(empty($_POST)){
     return;
   }
-  //if (!wp_verify_nonce($_POST['_wpnonce'], 'register_nonce')) die( __('Failed security check', 'wp-streamers') );
   
-  self::$profile_errors = new \WP_Error();
-  do_action('streamer_save_date', $_POST);
-
+  if (!( empty($_POST) || !wp_verify_nonce($_POST['1d81ecc2aa'],'9f9cf458e2') )) {
+    self::$profile_errors = new \WP_Error();
+    do_action('streamer_save_date', $_POST);
+  }
 }
 
 public static function save_data($data){
@@ -109,8 +109,10 @@ public static function save_data($data){
   if(isset($data['description']) && !preg_match('/(wp-login|wp-admin|\/)/',$data['description'])){
     //update_user_meta($user_id, 'description', $data['description']);
     $userdata['description'] = $data['description'];
-  } else {
-    self::$profile_errors->add('1', sprintf('Недопустимые символы в описании %s',$data['description']));
+  } elseif ( !isset($data['description']) ) {
+    return;
+  } else {  
+    self::$profile_errors->add('1', sprintf('Invalid characters in description %s',$data['description']));
   }
   
   if( empty( self::$profile_errors->get_error_messages() ) ) {
@@ -129,7 +131,6 @@ public static function notice($context = ''){
   }
 
   $profile_errors = self::$profile_errors->get_error_messages();
-//var_dump($profile_errors);
   if( empty( $profile_errors ) ) {
     printf(
       '<div class="alert alert-success" role="alert">%s</div>',

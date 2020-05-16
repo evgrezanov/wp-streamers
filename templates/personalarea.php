@@ -2,8 +2,6 @@
 ?>
 <div class="container">
     <div class="row">
-        <?php do_action('display_notice', $content='streamer_personal_area');?>
-
         <!-- avatar upload-->
         <div class="col-md-4 order-md-1 mb-4">
             <div class="wp-streamers-photo">
@@ -16,11 +14,12 @@
                 </button>
             </div>
         </div>
-
         <!--personal data-->
         <div class="col-md-8 order-md-2">
+            <?php do_action('display_notice', $content='streamer_personal_area');?>
             <form enctype="multipart/form-data" method="post" id="streamer-edit-profile" class="streamer-edit-profile"
                 class="needs-validation" novalidate>
+                <?php wp_nonce_field('9f9cf458e2','1d81ecc2aa'); ?>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="first_name">First name</label>
@@ -111,7 +110,6 @@
                 </div>
                 <input type='hidden' id="region" name="region" value="<?=$region?>" />
                 <input class="btn btn-primary btn-lg btn-block" type="submit" value="Save">
-                <?php wp_nonce_field('streamer_save_settings_nonce', 'streamer_save_settings_nonce'); ?>
             </form>
         </div>
 

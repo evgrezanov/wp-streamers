@@ -6,8 +6,6 @@ class UPPY_AVATAR {
 	public static function init(){
 		add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
 		add_action('rest_api_init', [__CLASS__, 'rest_api_init']);
-		//todo change name
-		add_shortcode('shortcode_tag', [__CLASS__, 'custom_shortcode']);
 	}
 
 	public static function assets(){
@@ -120,12 +118,7 @@ class UPPY_AVATAR {
 	   		return $default_url;
 		}
 	}
-	
-	public static function custom_shortcode( $atts, $content ){
-		ob_start();
-		require_once plugin_dir_path(__DIR__).'templates/streamer-avatar.php'.$content;
-		return ob_get_clean();
-	}
+
 	
 }
 

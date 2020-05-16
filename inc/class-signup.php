@@ -9,7 +9,7 @@ class WP_STREAMER_SIGNUP {
       add_shortcode('streamer_signup', [__CLASS__, 'signup']);
       add_action('streamer_registration', [__CLASS__, 'registration']);
       add_action('display_notice', [__CLASS__, 'notice']);
-      add_action('init', [__CLASS__, 'save_form']);
+      add_action('init', [__CLASS__, 'save_reg_form']);
   }
 
   public static function signup(){
@@ -26,20 +26,19 @@ class WP_STREAMER_SIGNUP {
     return ob_get_clean();
   }
 
-  public static function save_form(){
+  public static function save_reg_form(){
     if(empty($_POST)){
       return;
     }
-    //if (!wp_verify_nonce($_POST['_wpnonce'], 'register_nonce')) die( __('Failed security check', 'wp-streamers') );
-    
-    self::$errors = new \WP_Error();
-    do_action('streamer_registration', $_POST);
-
+    if (!( empty($_POST) || !wp_verify_nonce($_POST['bH37nfG7ej5G0F3'],'Hn9rU3ek0rG8rb') )) {
+      self::$errors = new \WP_Error();
+      do_action('streamer_registration', $_POST);
+    }
   }
 
   public static function registration($data){
     
-    //var_dump($_POST);
+    //var_dump($data);
     //$data = $_POST;
   
     // Проверяем на не допустимые значения
@@ -78,20 +77,17 @@ class WP_STREAMER_SIGNUP {
     }
 
     // user birthday
-    if ( $data['user_birthday'] != '') {
-      if(!strtotime($data['user_birthday'])){
+    if ( $data['user_birthday'] == '') {
         self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
-      }  
     } else {
-
       $user_birthday = $data['user_birthday'];
       $current_year = date('Y');
       $birthday_year = strtotime($user_birthday);
       $year = date('Y', $birthday_year);
       $age = $current_year - $year;
       if ( $age < 15):
-        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone (current age '.$age.')', 'wp-streamers') );
-      endif;
+        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );
+      endif;  
     }
     
     // user region
@@ -111,6 +107,8 @@ class WP_STREAMER_SIGNUP {
       $new_user_id = wp_insert_user( $userdata );
       
       update_user_meta( $new_user_id, 'user_region', $data['region'] );
+      update_user_meta( $new_user_id, 'user_birthday', $user_birthday);
+
       wp_new_user_notification( $new_user_id, null, 'both');
       
       //Auth

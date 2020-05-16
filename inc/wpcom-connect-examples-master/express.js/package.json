@@ -1,0 +1,10 @@
+{
+  "name": "trafalgar-express",
+  "description": "Trafalgar Square WordPress.com Connect",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "request": ">= 2.0"
+  }
+}

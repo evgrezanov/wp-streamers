@@ -9,6 +9,7 @@
     <div class="col-12 text-center">
         <?php do_action('display_notice', $content='streamer_signup');?>
         <form enctype="multipart/form-data" method="post" name="user_registeration">
+            <?php wp_nonce_field('Hn9rU3ek0rG8rb','bH37nfG7ej5G0F3'); ?>
             <label for="user_login"><?php __('Username', 'wp-streamers') ?>
                 <input type="text" id="user_login" name="user_login" placeholder="Username" class="text"
                     required /><br />
@@ -33,7 +34,6 @@
             </label>
             <input type='hidden' id="region" name="region" value="NA" />
             <input type="submit" name="user_registeration" value="SignUp" />
-            <?php wp_nonce_field('streamer_reg_nonce', 'streamer_nonce'); ?>
         </form>
     </div>
 </div>
