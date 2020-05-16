@@ -34,6 +34,7 @@ class WP_STREAMER_SIGNUP {
     
     self::$errors = new \WP_Error();
     do_action('streamer_registration', $_POST);
+
   }
 
   public static function registration($data){
@@ -64,7 +65,9 @@ class WP_STREAMER_SIGNUP {
     // exist username/login
     if ( username_exists( $data['user_login'] )) {
       self::$errors->add( 'username_exists', ( __('User name exist already!', 'wp-streamers')) );
-    } 
+    } elseif (!validate_username( $data['user_login'] )) {
+      self::$errors->add( 'username_invalid', ( __('В имени пользователя использованы недопустимые символы!', 'wp-streamers')) );
+    }
     // empty email
     if ( empty( $data['user_email'] ) ) {
       self::$errors->add( 'email', __('Email field text is not email', 'wp-streamers') );
@@ -75,18 +78,21 @@ class WP_STREAMER_SIGNUP {
     }
 
     // user birthday
-    if ( empty ($data['user_birthday'])) {
-      self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
-    }
+    if ( $data['user_birthday'] != '') {
+      if(!strtotime($data['user_birthday'])){
+        self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
+      }  
+    } else {
 
-    $user_birthday = $data['user_birthday'];
-    $current_year = date('Y');
-    $birthday_year = strtotime($user_birthday);
-    $year = date('Y', $birthday_year);
-    $age = $current_year - $year;
-    if ( $age < 15):
-      self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone (current age '.$age.')', 'wp-streamers') );
-    endif;
+      $user_birthday = $data['user_birthday'];
+      $current_year = date('Y');
+      $birthday_year = strtotime($user_birthday);
+      $year = date('Y', $birthday_year);
+      $age = $current_year - $year;
+      if ( $age < 15):
+        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone (current age '.$age.')', 'wp-streamers') );
+      endif;
+    }
     
     // user region
     if ( empty ($data['region'])) {
@@ -99,24 +105,22 @@ class WP_STREAMER_SIGNUP {
         'user_login'      => $data['user_login'], 
         'user_email'      => $data['user_email'],
         'role'            => 'streamers', 
+        'user_registered' => date('Y-m-d H:i:s')
       );
       
       $new_user_id = wp_insert_user( $userdata );
       
       update_user_meta( $new_user_id, 'user_region', $data['region'] );
-      update_user_meta( $new_user_id, 'user_birthday', $data['user_birthday'] );
       wp_new_user_notification( $new_user_id, null, 'both');
-      sleep(10);
       
       //Auth
-		  $creds = array();
-      $creds['user_login'] = $data['user_login'];
-      $creds['user_password'] = $data['user_password'];
-      $creds['remember'] = true;
-      
-      $user = wp_signon( $creds, false );
-      wp_safe_redirect(home_url());
-      exit;
+      $user = get_user_by('id', $new_user_id );
+      clean_user_cache($user->ID);
+      wp_clear_auth_cookie();
+      wp_set_current_user($user->ID);
+      wp_set_auth_cookie($user->ID, true, false);
+      update_user_caches($user);
+      wp_safe_redirect(home_url().'/me');
     }
 
   }

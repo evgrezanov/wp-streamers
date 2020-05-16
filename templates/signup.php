@@ -6,7 +6,7 @@
 }
 </style>
 <div class="row">
-    <div class="col-12">
+    <div class="col-12 text-center">
         <?php do_action('display_notice', $content='streamer_signup');?>
         <form enctype="multipart/form-data" method="post" name="user_registeration">
             <label for="user_login"><?php __('Username', 'wp-streamers') ?>
