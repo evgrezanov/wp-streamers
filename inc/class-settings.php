@@ -30,14 +30,12 @@ public static function personal_area(){
 }
 
 public static function save_settings_form(){
-  if(empty($_POST)){
+  if(empty($_POST) || !isset($_POST['save_personal_data'])){
     return;
-  }
-  
-  if (!( empty($_POST) || !wp_verify_nonce($_POST['1d81ecc2aa'],'9f9cf458e2') )) {
+  } else {
     self::$profile_errors = new \WP_Error();
     do_action('streamer_save_date', $_POST);
-  }
+  } 
 }
 
 public static function save_data($data){
@@ -78,12 +76,11 @@ public static function save_data($data){
   }
 
   // user birthday
-  if ( $data['user_birthday'] != '') {
+  if ( isset($data['user_birthday']) ) {
     if(!strtotime($data['user_birthday'])){
       self::$profile_errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
     }  
   } else {
-
     $user_birthday = $data['user_birthday'];
     $current_year = date('Y');
     $birthday_year = strtotime($user_birthday);

@@ -5,7 +5,7 @@
  * Plugin URI:  https://github.com/evgrezanov/wp-streamers
  * Author URI:  https://www.upwork.com/freelancers/~01ea58721977099d53
  * Author:      <a href="https://www.upwork.com/freelancers/~01ea58721977099d53" target="_blank">Evgeniy Rezanov</a>
- * Version:     1.3
+ * Version:     1.4 beta
  * GitHub Plugin URI: evgrezanov/wp-streamers
  * GitHub Plugin URI: https://github.com/evgrezanov/wp-streamers
  * Text Domain: wp-streamers
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'WP_STREAMERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WP_STREAMERS_FILE', __FILE__ );
 define( 'WP_STREAMERS_URL', plugin_dir_url( __FILE__ ) );
-define( 'WP_STREAMERS_VERSION', '1.3' );
+define( 'WP_STREAMERS_VERSION', '1.4' );
 define( 'WP_STREAMERS_NO_IMG', 'img/no_avatar.png');
 
 class WP_STREAMERS {
@@ -37,6 +37,10 @@ class WP_STREAMERS {
 
         // require signup form for streamer
         require_once('inc/class-signup.php');
+
+        // require signup form for streamer
+        require_once('inc/class-signin.php');
+
 
         // add Streamers role based subscribers role capabilities
         register_activation_hook( __FILE__, function(){

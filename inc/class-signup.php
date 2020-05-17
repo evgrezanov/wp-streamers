@@ -27,10 +27,13 @@ class WP_STREAMER_SIGNUP {
   }
 
   public static function save_reg_form(){
-    if(empty($_POST)){
+    /*if(empty($_POST)){
       return;
-    }
-    if (!( empty($_POST) || !wp_verify_nonce($_POST['bH37nfG7ej5G0F3'],'Hn9rU3ek0rG8rb') )) {
+    }*/
+    //if (!( empty($_POST) || !wp_verify_nonce($_POST['bH37nfG7ej5G0F3'],'Hn9rU3ek0rG8rb') || isset($_POST['send_user_registeration']) )) {
+    if( empty($_POST) || !isset($_POST['send_user_registeration'])){    
+      return;
+    } else {    
       self::$errors = new \WP_Error();
       do_action('streamer_registration', $_POST);
     }
@@ -63,7 +66,7 @@ class WP_STREAMER_SIGNUP {
     
     // exist username/login
     if ( username_exists( $data['user_login'] )) {
-      self::$errors->add( 'username_exists', ( __('User name exist already!', 'wp-streamers')) );
+      self::$errors->add( 'username_exists', __('User name exist already!', 'wp-streamers') );
     } elseif (!validate_username( $data['user_login'] )) {
       self::$errors->add( 'username_invalid', ( __('В имени пользователя использованы недопустимые символы!', 'wp-streamers')) );
     }
@@ -109,6 +112,7 @@ class WP_STREAMER_SIGNUP {
       update_user_meta( $new_user_id, 'user_region', $data['region'] );
       update_user_meta( $new_user_id, 'user_birthday', $user_birthday);
 
+      // TODO why no have notification?
       wp_new_user_notification( $new_user_id, null, 'both');
       
       //Auth

@@ -33,7 +33,7 @@
                 <input type="date" id="user_birthday" name="user_birthday" placeholder="birthday" required /> <br />
             </label>
             <input type='hidden' id="region" name="region" value="NA" />
-            <input type="submit" name="user_registeration" value="SignUp" />
+            <input type="submit" name="send_user_registeration" value="SignUp" />
         </form>
     </div>
 </div>

@@ -109,7 +109,7 @@
                     </div>
                 </div>
                 <input type='hidden' id="region" name="region" value="<?=$region?>" />
-                <input class="btn btn-primary btn-lg btn-block" type="submit" value="Save">
+                <input class="btn btn-primary btn-lg btn-block" type="submit" name="save_personal_data" value="Save">
             </form>
         </div>
 
