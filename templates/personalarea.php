@@ -91,7 +91,7 @@
                     <select id="streamer_valorant_server" class="form-control" name="streamer_valorant_server" required>
                         <?php 
                             foreach ($valorant_server as $server): ?>
-                        <option <?= selected $usermeta['streamer_valorant_server']?> value="<?=$server->term_id?>">
+                        <option value="<?=$server->term_id?>">
                             <?=$server->name?>
                         </option>
                         <?php    
@@ -102,7 +102,7 @@
 
                 <!--birthday-->
                 <?=__('Valorant server', 'wp-streamers');?>
-                <?php $bd = exploid('-',$usermeta['streamer_bday']); ?>
+                <?php //$bd = exploid('-', $usermeta['streamer_bday']); ?>
                 <div class="row">
                     <div class="col-sm-4">
                         <select name="user_birthday_dd" class="sel-wd-birth-date select" data-placeholder="<?php
