@@ -16,6 +16,10 @@ class WP_STREAMER_SIGNUP {
     ob_start();
     if ( get_option( 'users_can_register' ) ) :
       if ( !is_user_logged_in() ):
+        $valorant_server = get_terms(array(
+          'taxonomy'    =>  'valorant-server',
+          'hide_empty'  => false
+        ));
         require_once plugin_dir_path(__DIR__).'templates/signup.php';
       else:  
         echo __('You already register','wp-streamers');
@@ -27,10 +31,6 @@ class WP_STREAMER_SIGNUP {
   }
 
   public static function save_reg_form(){
-    /*if(empty($_POST)){
-      return;
-    }*/
-    //if (!( empty($_POST) || !wp_verify_nonce($_POST['bH37nfG7ej5G0F3'],'Hn9rU3ek0rG8rb') || isset($_POST['send_user_registeration']) )) {
     if( empty($_POST) || !isset($_POST['send_user_registeration'])){    
       return;
     } else {    
@@ -40,29 +40,6 @@ class WP_STREAMER_SIGNUP {
   }
 
   public static function registration($data){
-    
-    //var_dump($data);
-    //$data = $_POST;
-  
-    // Проверяем на не допустимые значения
-    /*foreach ($data as $key => &$d) :
-      $d = wp_strip_all_tags($d);
-
-      if( $key != 'user_login' && $key != 'user_email' && $key != 'user_password' &&
-        $key != 'user_region' && $key != 'user_birthday'){
-        if(preg_match('/(wp-login|wp-admin|\/|\.)/',$d) ) {
-          self::$errors->add('1', sprintf('Incorrect value in field %s 😏',$d));
-        }
-      }
-    endforeach;*/
-
-    // check password
-    /*if( ! empty($data['user_password']) ){
-      $password = preg_match('^[A-Za-z0-9\(\!\"\?\$\%\^\&\)]{8,24}$',$data['user_password']);
-      if(!$password){
-        self::$errors->add('2', sprintf('Ошибка! Пароль "%s" недостаточно надежен. Ваши SBC под угрозой 😏',$data['user_password']));
-      }
-    }*/
     
     // exist username/login
     if ( username_exists( $data['user_login'] )) {
@@ -80,22 +57,16 @@ class WP_STREAMER_SIGNUP {
     }
 
     // user birthday
-    if ( $data['user_birthday'] == '') {
+    if ( empty($data['user_birthday_dd'])  || empty($data['user_birthday_mm']) || empty($data['user_birthday_yy'])) {
         self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
-    } else {
-      $user_birthday = $data['user_birthday'];
-      $current_year = date('Y');
-      $birthday_year = strtotime($user_birthday);
-      $year = date('Y', $birthday_year);
-      $age = $current_year - $year;
-      if ( $age < 15):
-        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );
-      endif;  
+    } 
+    if ( (date('Y') - $data['user_birthday_yy']) < 15){
+        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );  
     }
     
     // user region
-    if ( empty ($data['region'])) {
-      self::$errors->add( 'user_region', __('User region invalid', 'wp-streamers') );
+    if ( empty ($data['streamer_valorant_server'])) {
+      self::$errors->add( 'invalid_valorant_server', __('User Valorant server invalid', 'wp-streamers') );
     }
     
     if( empty( self::$errors->get_error_messages() ) ) {
@@ -108,9 +79,9 @@ class WP_STREAMER_SIGNUP {
       );
       
       $new_user_id = wp_insert_user( $userdata );
-      
-      update_user_meta( $new_user_id, 'user_region', $data['region'] );
-      update_user_meta( $new_user_id, 'user_birthday', $user_birthday);
+      $user_birthday = $data['streamer_birthday_dd'] . '-' . $data['streamer_birthday_mm'] . '-' . $data['streamer_birthday_yy'];
+      update_user_meta( $new_user_id, 'valorant_server', $data['streamer_valorant_server'] );
+      update_user_meta( $new_user_id, 'user_birthday_dd', $user_birthday);
 
       // TODO why no have notification?
       wp_new_user_notification( $new_user_id, null, 'both');

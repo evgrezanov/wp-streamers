@@ -16,7 +16,9 @@ class WP_STREAMER_SIGNIN {
         if ( !is_user_logged_in() ):
             require_once plugin_dir_path(__DIR__).'templates/signin.php';
         else:    
-            echo __('You already register','wp-streamers');
+            echo __('You already logged in','wp-streamers');
+            echo '<br>';
+            echo '<a href="'.wp_logout_url( home_url() ).'">'.__('Logout', 'wp-streamers').'</a>';
         endif;
         return ob_get_clean();
     }

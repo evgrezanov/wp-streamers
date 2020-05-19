@@ -38,8 +38,11 @@ class WP_STREAMERS {
         // require signup form for streamer
         require_once('inc/class-signup.php');
 
-        // require signup form for streamer
+        // require signin form for streamer
         require_once('inc/class-signin.php');
+
+        // require team functions
+        require_once('inc/class-teams.php');
 
 
         // add Streamers role based subscribers role capabilities
