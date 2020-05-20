@@ -40,20 +40,31 @@ class WP_STREAMER_SIGNUP {
   }
 
   public static function registration($data){
-    
     // exist username/login
     if ( username_exists( $data['user_login'] )) {
       self::$errors->add( 'username_exists', __('User name exist already!', 'wp-streamers') );
     } elseif (!validate_username( $data['user_login'] )) {
       self::$errors->add( 'username_invalid', ( __('В имени пользователя использованы недопустимые символы!', 'wp-streamers')) );
     }
-    // empty email
+    // email
     if ( empty( $data['user_email'] ) ) {
       self::$errors->add( 'email', __('Email field text is not email', 'wp-streamers') );
     } elseif ( !is_email( $data['user_email'] ) ) {
       self::$errors->add( 'email_invalid', __('You entered an invalid email address!', 'wp-streamers') );
     } elseif ( email_exists( $data['user_email'] ) ) {
       self::$errors->add( 'email_exist', __('This email address is already in use!', 'wp-streamers') );
+    }
+
+    // password validation
+    $password = $data['user_password'];
+
+    // Validate password strength
+    $uppercase = preg_match('@[A-Z]@', $password);
+    $lowercase = preg_match('@[a-z]@', $password);
+    $number    = preg_match('@[0-9]@', $password);
+
+    if(!$uppercase || !$lowercase || !$number || strlen($password) < 6) {
+      self::$errors->add( 'weak_password', __('Password should be at least 6 characters in length and should include at least one upper case letter, one number.', 'wp-streamer'));
     }
 
     // user birthday
@@ -72,16 +83,16 @@ class WP_STREAMER_SIGNUP {
     if( empty( self::$errors->get_error_messages() ) ) {
       $userdata = array(
         'user_pass'       => $data['user_password'], 
-        'user_login'      => $data['user_login'], 
-        'user_email'      => $data['user_email'],
+        'user_login'      => sanitize_text_field($data['user_login']), 
+        'user_email'      => sanitize_text_field($data['user_email']),
         'role'            => 'streamers', 
         'user_registered' => date('Y-m-d H:i:s')
       );
       
       $new_user_id = wp_insert_user( $userdata );
-      $user_birthday = $data['streamer_birthday_dd'] . '-' . $data['streamer_birthday_mm'] . '-' . $data['streamer_birthday_yy'];
-      update_user_meta( $new_user_id, 'valorant_server', $data['streamer_valorant_server'] );
-      update_user_meta( $new_user_id, 'user_birthday_dd', $user_birthday);
+      $user_birthday = $data['user_birthday_dd'] . '-' . $data['user_birthday_mm'] . '-' . $data['user_birthday_yy'];
+      add_user_meta( $new_user_id, 'valorant_server', $data['streamer_valorant_server'] );
+      add_user_meta( $new_user_id, 'user_birthday_dd', $user_birthday);
 
       // TODO why no have notification?
       wp_new_user_notification( $new_user_id, null, 'both');

@@ -46,9 +46,10 @@ public static function personal_area(){
   if ( is_user_logged_in() ):
     $user_id = get_current_user_id();
     $img = UPPY_AVATAR::get_streamer_avatar($user_id, 'tumbnail');
+    $rank_img = UPPY_AVATAR::get_streamer_rank_verify($user_id, 'tumbnail');
     $user = get_userdata($user_id);
     $usermeta = get_user_meta($user_id);
-    //var_dump($usermeta);
+    //echo $usermeta['valorant_server'][0];
     //get rank array
     $streamer_rank = self::$streamer_rank;
     //get streamer_preferred_agent
@@ -116,7 +117,7 @@ public static function save_data($data){
   } elseif ( (date('Y') - $data['user_birthday_yy']) < 15){
     self::$paerrors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );  
   } else {
-    $user_birthday = $data['streamer_birthday_dd'] . '-' . $data['streamer_birthday_mm'] . '-' . $data['streamer_birthday_yy'];
+    $user_birthday = $data['user_birthday_dd'] . '-' . $data['user_birthday_mm'] . '-' . $data['user_birthday_yy'];
     self::$usermeta['streamer_bday'] = $user_birthday;
   }
   
@@ -186,9 +187,11 @@ public static function save_data($data){
   if( empty( self::$paerrors->get_error_messages() ) ) {
     wp_update_user($userdata);
     $usermeta = self::$usermeta;
-    foreach ($usermeta as $key=>$value):
-      update_user_meta($user_id, $key, $value);
-    endforeach;
+    if ($usermeta):
+      foreach ($usermeta as $key=>$value):
+        update_user_meta($user_id, $key, $value);
+      endforeach;
+    endif;  
   }
 
 }

@@ -54,7 +54,8 @@
             <?php echo __('Date of birthday', 'wp-streamers') ?>
             <div class="row">
                 <div class="col-sm-4">
-                    <select name="user_birthday_dd" class="sel-wd-birth-date select" data-placeholder="<?php
+                    <select id="user_birthday_dd" name="user_birthday_dd" class="sel-wd-birth-date select"
+                        data-placeholder="<?php
 					_e( 'DD', 'wp-streamers' ); ?>">
                         <option value=""></option>
                         <?php
@@ -68,7 +69,8 @@
                     </select>
                 </div>
                 <div class="col-sm-4">
-                    <select name="user_birthday_mm" class="sel-wd-birth-month select" data-placeholder="<?php
+                    <select id="user_birthday_mm" name="user_birthday_mm" class="sel-wd-birth-month select"
+                        data-placeholder="<?php
 					    _e( 'MM', 'wp-streamers' ); ?>">
                         <option value=""></option>
                         <?php
@@ -82,7 +84,8 @@
                     </select>
                 </div>
                 <div class="col-sm-4">
-                    <select name="user_birthday_yy" class="sel-wd-birth-year select" data-placeholder="<?php
+                    <select id="user_birthday_yy" name="user_birthday_yy" class="sel-wd-birth-year select"
+                        data-placeholder="<?php
 					_e( 'YYYY', 'socialbet' ); ?>">
                         <option value=""></option>
                         <?php
