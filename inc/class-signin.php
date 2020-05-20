@@ -35,6 +35,7 @@ class WP_STREAMER_SIGNIN {
     }
 
     public static function login($data){
+        $remember = $data['rememberme'];
         if($remember) $remember = "true";  
         else $remember = "false";  
    

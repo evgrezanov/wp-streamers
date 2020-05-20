@@ -49,7 +49,6 @@ public static function personal_area(){
     $rank_img = UPPY_AVATAR::get_streamer_rank_verify($user_id, 'tumbnail');
     $user = get_userdata($user_id);
     $usermeta = get_user_meta($user_id);
-    //echo $usermeta['valorant_server'][0];
     //get rank array
     $streamer_rank = self::$streamer_rank;
     //get streamer_preferred_agent
@@ -121,7 +120,6 @@ public static function save_data($data){
     self::$usermeta['streamer_bday'] = $user_birthday;
   }
   
-
   // valorant_server
   if ( !empty ($data['streamer_valorant_server'])) {
     self::$usermeta['streamer_valorant_server'] = $data['streamer_valorant_server'];
@@ -182,6 +180,39 @@ public static function save_data($data){
   if(isset($data['streamer-availability']) && !empty($data['streamer-availability'])):
     self::$usermeta['streamer-availability'] = $data['streamer-availability'];
   endif;
+
+  // check password
+  if( ! empty($data['passw1']) and isset($data['passw2']) ){
+    // Validate password strength
+    $uppercase = preg_match('@[A-Z]@', $data['passw1']);
+    $lowercase = preg_match('@[a-z]@', $data['passw1']);
+    $number    = preg_match('@[0-9]@', $data['passw1']);
+
+    if(!$uppercase || !$lowercase || !$number || strlen($data['passw1']) < 6) {
+      self::$paerrors->add( 'weak_password', __('Password should be at least 6 characters in length and should include at least one upper case letter, one number.', 'wp-streamer'));
+    }
+
+    if($data['passw1'] !== $data['passw2']){
+      self::$paerrors->add('password_not_changed', __('The password has not been changed, the entered passwords do not match.', 'wp-streamer'));
+    }
+
+    if( empty( self::$paerrors->get_error_messages() ) ) {
+      wp_set_password( $data['passw1'], $user_id );
+      $user_info = get_userdata($user_id);
+      $auth = wp_authenticate( $user_info->user_email, $data['passw1'] );
+    }
+
+  }
+
+  // check email
+  /*if(isset($data['user_email'])){
+    if(is_email($data['user_email'])){
+      $userdata['user_email'] = $data['user_email'];
+      wp_update_user( $userdata );
+    } else {
+      self::$paerrors->add('email_not_changed', __('Email has not been changed. The format of the entered address is not supported by the site.', 'wp-streamers'));
+    }
+  }*/
 
   // check errors
   if( empty( self::$paerrors->get_error_messages() ) ) {
