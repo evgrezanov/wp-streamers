@@ -240,12 +240,19 @@ class WP_STREAMERS_TEAMS {
     $age_requirement = get_post_meta($post->ID, 'age_requirement', true) . '+';
     $team_type = get_the_terms($post->ID, 'teams-type');
     $all_team_type = get_terms(array(
-      'taxonomy'    =>  'team-type',
+      'taxonomy'    =>  'teams-type',
       'hide_empty'  => false
     ));
     $regions = get_the_terms($post->ID, 'valorant-server');
-    //$all_regi
+    $all_region = get_terms(array(
+      'taxonomy'    =>  'valorant-server',
+      'hide_empty'  => false
+    ));
     $ranks = get_the_terms($post->ID, 'rank-requirement');
+    $all_ranks = get_terms(array(
+      'taxonomy'    =>  'rank-requirement',
+      'hide_empty'  => false
+    ));
     $author = get_userdata($post->post_author);
     $logo = get_the_post_thumbnail($post->ID, array(150,150));
     ob_start();

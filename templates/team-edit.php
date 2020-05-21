@@ -1,5 +1,4 @@
 <?php
-
 ?>
 <div class="container">
     <div class="row">
@@ -24,70 +23,60 @@
                 <!--_nonce-->
                 <?php wp_nonce_field('9f9cf458e2','1d81ecc2aa'); ?>
                 <!--Team name-->
-                <label for="team-name"><?=__('Team name','wp-streamers')?>
-                    <input type="text" class="form-control" id="team-name" name="team-name"
-                        value="<?=$post->post_title?>" required>
-                </label>
-                <!-- Team type -->
-                <label for="team-type"><?=__('Team type','wp-streamers')?>
-                    <select class="form-control" id="team-type" name="team-type">
-                        <?php foreach ($team_type as $type): ?>
-                        <option <?=selected($type->term_id, $key )?> value="<?=$key?>">
-                            <?=$value?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-                <!-- About team -->
-                <label for="team-description"><?=__('About team','wp-streamers')?>
-                    <textarea id="team-description" class="form-control" name="team-description">
-                        <?=$post->post_content?>
-                    </textarea>
-                </label>
+                <div class="row">
+                    <div class="col-12">
+                        <label for="team-name"><?=__('Team name','wp-streamers')?></label>
+                        <input style="width:100%;" type="text" class="form-control" id="team-name" name="team-name"
+                            value="<?=$post->post_title?>" required>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Team type -->
+                    <label for="team-type"><?=__('Team type','wp-streamers')?>
+                        <select class="form-control" id="team-type" name="team-type">
+                            <?php foreach ($all_team_type as $type): ?>
+                            <option <?=selected($team_type->term_id, $type->term_id)?> value="<?=$type->term_id?>">
+                                <?=$type->name?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </div>
                 <!-- Region -->
-                <label for="team-type"><?=__('Team type','wp-streamers')?>
+                <label for="team-type"><?=__('Region','wp-streamers')?>
                     <select class="form-control" id="team-type" name="team-type">
-                        <?php foreach ($team_type as $type): ?>
-                        <option <?=selected($type->term_id, $key )?> value="<?=$key?>">
-                            <?=$value?></option>
+                        <?php foreach ($all_region as $region): ?>
+                        <option <?=selected($regions->term_id, $region->term_id)?> value="<?=$region->term_id?>">
+                            <?=$region->name?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>
                 <!-- Rank Requirements: -->
-                <label for="team-type"><?=__('Team type','wp-streamers')?>
+                <label for="team-type"><?=__('Rank Requirements:','wp-streamers')?>
                     <select class="form-control" id="team-type" name="team-type">
-                        <?php foreach ($team_type as $type): ?>
-                        <option <?=selected($type->term_id, $key )?> value="<?=$key?>">
-                            <?=$value?></option>
+                        <?php foreach ($all_ranks as $rank): ?>
+                        <option <?=selected($ranks->term_id, $rank->term_id)?> value="<?=$rank->term_id?>">
+                            <?=$rank->name?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>
                 <!-- Age Requirement: -->
-                <div class="team-properties">
-                    <ul>
-                        <li>
-                            Team type:
-                            <?php foreach ($team_type as $type): ?>
-                            <strong><?=$type->name?></strong>
-                            <?php endforeach; ?>
-                        </li>
-                        <li>Region:
-                            <?php foreach ($regions as $region): ?>
-                            <strong><?=$region->name?></strong>
-                            <?php endforeach; ?>
-                        </li>
-                        <li>Rank Requirements:
-                            <?php foreach ($ranks as $rank): ?>
-                            <strong><?=$rank->name?></strong>
-                            <?php endforeach; ?>
-                        </li>
-                        <li>Age Requirement: <strong><?=$age_requirement?></strong></li>
-                    </ul>
-                </div>
+                <label for="team-age-requirement"><?=__('Age Requirement:','wp-streamers')?>
+                    <select class="form-control" id="tteam-age-requirement" name="team-age-requirement">
+
+                        <?php foreach (WP_STREAMERS_TEAMS::$age_requirement_list as $key=>$value): ?>
+                        <option <?=selected($key, $age_requirement)?> value="<?=$key?>">
+                            <?=$value?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <!-- About: -->
                 <div class="row">
                     <h3><?=__('About team:', 'wp-streamers')?></h3>
-                    < div class="col-12 team description">
-                        <?php echo $post->post_content; ?>
+                    <textarea class="team-description" name="team-description" rows="5">
+                        <?=esc_textarea($post->post_content)?></textarea>
                 </div>
+                <br>
                 <input class="btn btn-primary btn-lg btn-block" type="submit" name="save_team_data" value="Update team">
             </form>
         </div>
