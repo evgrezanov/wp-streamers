@@ -220,21 +220,38 @@ class WP_STREAMERS_TEAMS {
     //$events_meta['amount_players_needed'] = esc_textarea( $_POST['amount_players_needed'] );
     //$events_meta['positions_equired'] = esc_textarea( $_POST['positions_equired'] );
 
-  foreach ( $events_meta as $key => $value ) :
+    foreach ( $events_meta as $key => $value ) :
 
-    if ( get_post_meta( $post_id, $key, false ) ) {
-      update_post_meta( $post_id, $key, $value );
-    } else {
-      add_post_meta( $post_id, $key, $value);
-    }
+      if ( get_post_meta( $post_id, $key, false ) ) {
+        update_post_meta( $post_id, $key, $value );
+      } else {
+        add_post_meta( $post_id, $key, $value);
+      }
 
-    if ( ! $value ) {
-      delete_post_meta( $post_id, $key );
-    }
+      if ( ! $value ) {
+        delete_post_meta( $post_id, $key );
+      }
 
-  endforeach;
+    endforeach;
+  }
 
-}
+  public static function display_team() {
+    global $post;
+    $age_requirement = get_post_meta($post->ID, 'age_requirement', true) . '+';
+    $team_type = get_the_terms($post->ID, 'teams-type');
+    $regions = get_the_terms($post->ID, 'valorant-server');
+    $ranks = get_the_terms($post->ID, 'rank-requirement');
+    $author = get_userdata($post->post_author);
+    $logo = get_the_post_thumbnail($post->ID, array(150,150));
+    ob_start();
+      if ( is_user_logged_in() && $post->post_author == get_current_user_id() ):
+        require_once plugin_dir_path(__DIR__).'templates/team-view.php';
+      else :
+        require_once plugin_dir_path(__DIR__).'templates/team-edit.php';
+      endif;  
+    return ob_get_clean();
+  }
+
 }
 
 WP_STREAMERS_TEAMS::init();

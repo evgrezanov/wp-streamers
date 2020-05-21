@@ -1,12 +1,8 @@
 <?php
-global $post;
-$age_requirement = get_post_meta($post->ID, 'age_requirement', true) . '+';
-$team_type = get_the_terms($post->ID, 'teams-type');
-$regions = get_the_terms($post->ID, 'valorant-server');
-$ranks = get_the_terms($post->ID, 'rank-requirement');
 ?>
 <div class="container">
     <div class="row">
+        <?php do_action('display_notice', $content='single_team');?>
         <h1 class="team-title"><?=$post->post_title?></h1>
     </div>
     <div class="row">
@@ -22,30 +18,33 @@ $ranks = get_the_terms($post->ID, 'rank-requirement');
             <div class="team-properties">
                 <ul>
                     <li>
-                        Add by user: <?php echo '<strong>'.$author->first_name.' '.$author->last_name.'</strong>';?>
+                        <?php echo __('Add by user:', 'wp-streamers').' <strong>'.$author->first_name.' '.$author->last_name.'</strong>';?>
                     </li>
                     <li>
-                        Team type:
+                        <?=__('Team type:', 'wp-streamers')?>
                         <?php foreach ($team_type as $type): ?>
                         <strong><?=$type->name?></strong>
                         <?php endforeach; ?>
                     </li>
-                    <li>Region:
+                    <li><?=__('Region:', 'wp-streamers')?>
                         <?php foreach ($regions as $region): ?>
                         <strong><?=$region->name?></strong>
                         <?php endforeach; ?>
                     </li>
-                    <li>Rank Requirements:
+                    <li><?=__('Rank Requirements:', 'wp-streamers')?>
                         <?php foreach ($ranks as $rank): ?>
                         <strong><?=$rank->name?></strong>
                         <?php endforeach; ?>
                     </li>
-                    <li>Age Requirement: <strong><?=$age_requirement?></strong></li>
+                    <li><?=__('Age Requirement:', 'wp-streamers')?>
+                        <strong><?=$age_requirement?></strong>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="row">
+        <h3><?=__('About team:', 'wp-streamers')?></h3>
         <div class="col-12 team description">
             <?php echo $post->post_content; ?>
         </div>
