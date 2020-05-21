@@ -204,16 +204,6 @@ public static function save_data($data){
 
   }
 
-  // check email
-  /*if(isset($data['user_email'])){
-    if(is_email($data['user_email'])){
-      $userdata['user_email'] = $data['user_email'];
-      wp_update_user( $userdata );
-    } else {
-      self::$paerrors->add('email_not_changed', __('Email has not been changed. The format of the entered address is not supported by the site.', 'wp-streamers'));
-    }
-  }*/
-
   // check errors
   if( empty( self::$paerrors->get_error_messages() ) ) {
     wp_update_user($userdata);

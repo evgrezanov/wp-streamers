@@ -1,11 +1,27 @@
 <?php
+//namespace Streamers\Teams;
 defined( 'ABSPATH' ) || exit;
 
 class WP_STREAMERS_TEAMS {
-
+  
+  public static $age_requirement_list = array(
+    '15'  =>  '15+',
+    '16'  =>  '16+',
+    '17'  =>  '17+',
+    '18'  =>  '18+',
+    '19'  =>  '19+',
+    '20'  =>  '20+',
+    '21'  =>  '21+',
+    '22'  =>  '22+',
+    '23'  =>  '23+'
+  );
+  
   public static function init(){
     add_action('init', [ __CLASS__, 'wp_streamers_register_taxonomy'], 20);
     add_action('init', [ __CLASS__, 'wp_streamers_register_cpt'], 30);
+    add_action('save_post_teams', [__CLASS__, 'save_post_teams'] );
+    
+    add_shortcode('display_team', [__CLASS__, 'display_team']);
   }
 
   /**
@@ -78,6 +94,38 @@ class WP_STREAMERS_TEAMS {
       //'_builtin'              => false,
       'show_in_quick_edit'    => null,
     ) );
+    register_taxonomy('rank-requirement', array('teams'), array(
+      'label'                 => __( 'Rank Requirement', 'wp-streamer' ),
+      'labels'                => array(
+        'name'                => __( 'Rank Requirements', 'wp-streamer' ),
+        'singular_name'       => __( 'Rank Requirement', 'wp-streamer' ),
+        'search_items'        => __( 'Find rank requirement', 'wp-streamer' ),
+        'all_items'           => __( 'All rank requirements', 'wp-streamer' ),
+        'view_item '          => __( 'View rank requirement', 'wp-streamer' ),
+        'parent_item'         => __( 'Parent rank requirement', 'wp-streamer' ),
+        'parent_item_colon'   => __( 'Parent rank requirement:', 'wp-streamer' ),
+        'edit_item'           => __( 'Edit rank requirement', 'wp-streamer' ),
+        'update_item'         => __( 'Update rank requirement', 'wp-streamer' ),
+        'add_new_item'        => __( 'Add rank requirement', 'wp-streamer' ),
+        'new_item_name'       => __( 'Name of rank requirement', 'wp-streamer' ),
+        'menu_name'           => __( 'Rank requirement', 'wp-streamer' ),
+      ),
+      'description'           => __( 'All rank requirement', 'wp-streamer' ),
+      'public'                => true,
+      'publicly_queryable'    => true,
+      'show_in_nav_menus'     => true,
+      'show_ui'               => true,
+      'show_in_menu'          => true,
+      'show_tagcloud'         => true,
+      'show_in_rest'          => true, 
+      'hierarchical'          => false,
+      'rewrite'               => true,
+      'capabilities'          => array(),
+      'meta_box_cb'           => null,
+      'show_admin_column'     => true,
+      //'_builtin'              => false,
+      'show_in_quick_edit'    => null,
+    ) );
   }
 
   /**
@@ -113,10 +161,80 @@ class WP_STREAMERS_TEAMS {
         'has_archive'         => 'teams',
         'query_var'           => true,
         'exclude_from_search' => false,
+        'register_meta_box_cb'  => [__CLASS__, 'add_teams_metaboxes'],
       ]
     );
   }
 
+  public static function add_teams_metaboxes(){
+    $screens = array('teams');
+    add_meta_box(
+        'teams_fields',
+        __('Team meta fields', 'wp-streamers'),
+        [__CLASS__, 'display_teams_fields'],
+        'teams',
+        'normal',
+        'default',
+        $screens
+    );
+  }
+
+  public static function display_teams_fields($post, $meta) {
+    wp_nonce_field( basename( __FILE__ ), 'teams_fields' );
+    $age_requirement = get_post_meta( $post->ID, 'age_requirement', true );
+    $amount_players_needed = get_post_meta( $post->ID, 'amount_players_needed', true );
+    $positions_equired = get_post_meta( $post->ID, 'positions_equired', true );
+    
+    // age required
+    $age_requirement_list = self::$age_requirement_list;
+    $age_select =   '<label>Age Requirement</label>';
+    $age_select .=  '<select class="widefat" name="age_requirement">';
+    foreach ($age_requirement_list as $key=>$value):
+      $age_select .= '<option '. selected($age_requirement, $key ) . 'value="'.$key.'">'.$value.'</option>';
+    endforeach;
+    $age_select .='</select>';
+    echo $age_select;
+
+    // position required
+    //$preferred_agent = WP_STREAMER_SETTINGS::$streamer_preferred_agent();
+    //echo '<label>Amount of players needed</label><input type="text" name="amount_players_needed" value="' . esc_html( $amount_players_needed )  . '" class="widefat">';
+    //echo '<label>Positions required</label><input type="text" name="positions_equired" value="' . esc_html( $positions_equired )  . '" class="widefat">';
+  }
+
+  public static function save_post_teams( $post_id ) {
+        
+    if ( wp_is_post_revision( $post_id ) ){
+        return;
+    }
+
+    if ( ! current_user_can( 'edit_post', $post_id ) ):
+        return $post_id;
+    endif;
+
+    if ( ! isset( $_POST['age_requirement'] ) || ! wp_verify_nonce( $_POST['teams_fields'], basename(__FILE__) ) ):
+    //if ( ! isset( $_POST['age_requirement'] ) || ! isset( $_POST['amount_players_needed'] ) || ! isset( $_POST['positions_equired'] ) || ! wp_verify_nonce( $_POST['teams_fields'], basename(__FILE__) ) ):
+        return $post_id;
+    endif;
+    
+    $events_meta['age_requirement'] = esc_textarea( $_POST['age_requirement'] );
+    //$events_meta['amount_players_needed'] = esc_textarea( $_POST['amount_players_needed'] );
+    //$events_meta['positions_equired'] = esc_textarea( $_POST['positions_equired'] );
+
+  foreach ( $events_meta as $key => $value ) :
+
+    if ( get_post_meta( $post_id, $key, false ) ) {
+      update_post_meta( $post_id, $key, $value );
+    } else {
+      add_post_meta( $post_id, $key, $value);
+    }
+
+    if ( ! $value ) {
+      delete_post_meta( $post_id, $key );
+    }
+
+  endforeach;
+
+}
 }
 
 WP_STREAMERS_TEAMS::init();
