@@ -239,15 +239,20 @@ class WP_STREAMERS_TEAMS {
     global $post;
     $age_requirement = get_post_meta($post->ID, 'age_requirement', true) . '+';
     $team_type = get_the_terms($post->ID, 'teams-type');
+    $all_team_type = get_terms(array(
+      'taxonomy'    =>  'team-type',
+      'hide_empty'  => false
+    ));
     $regions = get_the_terms($post->ID, 'valorant-server');
+    //$all_regi
     $ranks = get_the_terms($post->ID, 'rank-requirement');
     $author = get_userdata($post->post_author);
     $logo = get_the_post_thumbnail($post->ID, array(150,150));
     ob_start();
       if ( is_user_logged_in() && $post->post_author == get_current_user_id() ):
-        require_once plugin_dir_path(__DIR__).'templates/team-view.php';
-      else :
         require_once plugin_dir_path(__DIR__).'templates/team-edit.php';
+      else :
+        require_once plugin_dir_path(__DIR__).'templates/team-view.php';
       endif;  
     return ob_get_clean();
   }

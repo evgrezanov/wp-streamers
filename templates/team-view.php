@@ -2,12 +2,10 @@
 ?>
 <div class="container">
     <div class="row">
-        <?php do_action('display_notice', $content='single_team');?>
         <h1 class="team-title"><?=$post->post_title?></h1>
     </div>
     <div class="row">
         <div class="col-md-4 order-md-1 mb-4">
-            <!-- avatar upload-->
             <div class="team-logo">
                 <div class="team_avatar">
                     <?php echo $logo; ?>
