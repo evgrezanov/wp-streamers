@@ -1,8 +1,10 @@
 <?php
-//namespace Streamers\Teams;
 defined( 'ABSPATH' ) || exit;
-
 class WP_STREAMERS_TEAMS {
+
+  public static $errors;
+
+  public static $team_terms;
   
   public static $age_requirement_list = array(
     '15'  =>  '15+',
@@ -15,13 +17,240 @@ class WP_STREAMERS_TEAMS {
     '22'  =>  '22+',
     '23'  =>  '23+'
   );
+
+  // default items for preferred agent
+  public static $streamer_preferred_agent = array(
+    "breach"    => "Breach", 
+    "brimstone" => "Brimstone", 
+    "cypher"    => "Cypher", 
+    "jett"      => "Jett", 
+    "omen"      => "Omen", 
+    "phoenix"   => "Phoenix", 
+    "raze"      => "Raze", 
+    "sage"      => "Sage",
+    "sova"      => "Sova",
+    "viper"     => "Viper"
+  );
   
   public static function init(){
+    // register
     add_action('init', [ __CLASS__, 'wp_streamers_register_taxonomy'], 20);
     add_action('init', [ __CLASS__, 'wp_streamers_register_cpt'], 30);
+    // save metadata from wp-admin
     add_action('save_post_teams', [__CLASS__, 'save_post_teams'] );
-    
+    // render shortcode
     add_shortcode('display_team', [__CLASS__, 'display_team']);
+    // init rest
+    add_action('rest_api_init', [__CLASS__, 'rest_api_init']);
+    // assets
+    add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+  }
+
+  /**
+   * add scripts
+   *
+   */  
+  public static function assets(){
+    global $post;
+    if ( is_singular('teams') && is_user_logged_in() && $post->post_author == get_current_user_id() ):
+      wp_enqueue_script('wp-api');
+      
+      wp_enqueue_script(
+        'popper-js',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
+        ['jquery'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-js',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
+        ['jquery', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-bundle',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.bundle.min.js'),
+        ['jquery', 'bootstrap-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-select',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
+        ['jquery', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_style(
+        'bootstrap-select', 
+        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
+      );
+
+      $args = [
+        'team-author' =>  get_current_user_id(),
+        'team-id'     =>  $post->ID
+      ];
+
+      wp_register_script(
+        'team-update',
+        WP_STREAMERS_URL.('asset/team-script.js')
+      );
+
+      wp_localize_script(
+        'team-update',
+        'endpointTeamUpdateProperties',
+        $args
+      );
+
+      wp_enqueue_script(
+        'team-update',
+        WP_STREAMERS_URL.('asset/team-script.js'),
+        ['jquery','bootstrap-select', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        true
+      );
+      
+    endif;
+  }
+  
+  /**
+   * init REST API by WP
+   *
+   * @url /wp-json/sstreamers/v1/team/update/
+   */
+  public static function rest_api_init() {
+    register_rest_route('streamers/v1', '/team/update/(?P<id>[\d]+)', [
+      'methods'  => 'POST',
+      'callback' => [__CLASS__, 'update_team'],
+      'args' => [
+				'id' => [
+					'required' => true,
+					'validate_callback' => function($param, $request, $key) {
+						return is_numeric( $param );
+					},
+				]
+			],
+    ]);
+  }
+
+  public static function update_team(){
+    $user_id = get_current_user_id();
+    $team_data = array();
+    $team_meta = array();
+    self::$errors = new \WP_Error();
+    
+    if(! empty($_REQUEST['team-id'])):
+      $team = get_post($_REQUEST['team-id']);
+      $team_data['ID'] = $_REQUEST['team-id'];
+    else:
+      self::$errors->add('0', 'Cannot take team object for edit!');
+    endif;
+
+    //post_title
+    if(! empty($_REQUEST['team-name'])){
+      $team_data['post_title'] = wp_strip_all_tags($_REQUEST['team-name']);
+      $team->post_title = wp_strip_all_tags($_REQUEST['team-name']);
+    } else {
+      self::$errors->add('1', 'Team name is empty! Add team name!');
+    }
+
+    // description
+    if(isset($_REQUEST['team-description']) && !preg_match('/(wp-login|wp-admin|\/)/',$_REQUEST['team-description'])){
+      $team->post_content = sanitize_textarea_field($_REQUEST['team-description']);
+      $team_data['post_content'] = sanitize_textarea_field($_REQUEST['team-description']);
+    } else {  
+      self::$errors->add('2', sprintf('Invalid characters in team description %s',$_REQUEST['team-description']));
+    }
+
+    // Team type
+    if(isset($_REQUEST['team-type']) && !empty($_REQUEST['team-type'])){
+      self::$team_terms['teams-type'] = $_REQUEST['team-type'];
+    } else {  
+      self::$errors->add('3', 'Input valid team type!');
+    }
+
+    // Region
+    if(isset($_REQUEST['team-region']) && !empty($_REQUEST['team-region'])){
+      self::$team_terms['valorant-server'] = $_REQUEST['team-region'];
+    } else {  
+      self::$errors->add('3', 'Input valid team region!');
+    }
+    
+    // Rank Requirements
+    if(isset($_REQUEST['team-rank-requirements']) && !empty($_REQUEST['team-rank-requirements'])){
+      self::$team_terms['rank-requirement'] = $_REQUEST['team-rank-requirements'];
+    } else {  
+      self::$errors->add('3', 'Input valid team rank requirements region!');
+    }
+
+    // Age Requirement
+    if(isset($_REQUEST['team-age-requirement']) && !empty($_REQUEST['team-age-requirement'])){
+      $team_meta['age_requirement'] = $_REQUEST['team-age-requirement'];
+    } else {  
+      self::$errors->add('3', 'Input valid team age requirement region!');
+    }
+
+    //Positions required
+    if(isset($_REQUEST['team-positions-requered-arr']) && !empty($_REQUEST['team-positions-requered-arr'])){
+      $positions = json_decode(stripslashes($_REQUEST['team-positions-requered-arr']));
+      if (!empty($positions)):
+        $pos_array=array();
+        foreach ($positions as $key => $value) :
+          $pos_array[$value] = $value;
+        endforeach;
+        $team_meta['position_required'] = $pos_array;
+      endif;
+    } else {  
+      self::$errors->add('7', 'Input valid positions requered field!');
+    }
+
+    // check errors and update team
+    if( empty( self::$errors->get_error_messages() ) ) :
+      // set team terms
+      $team_terms = self::$team_terms;
+      foreach ($team_terms as $key=>$value):
+        $terms = wp_set_post_terms($team->ID, [(int)$value], $key, false);
+        if (!$terms):
+          self::$errors->add('5', __('$post_id не число или равно 0.', 'wp-streamers'));
+        endif;
+        if ( is_wp_error($terms) ):
+          self::$errors->add('6', $terms->get_error_messages());
+        endif;
+        //error_log($terms);
+      endforeach;
+
+      // add meta 
+      if (!empty($team_meta)):
+        foreach ($team_meta as $key=>$value):
+          update_post_meta($team->ID, $key, $value);
+        endforeach;
+      endif;
+      
+      $result = wp_update_post( $team, true );
+      
+      if (is_wp_error($result)):
+        self::$errors->add('4', $result->get_error_messages());
+      endif;
+
+    endif;
+
+    if ( empty( self::$errors->get_error_messages() ) ):
+      $response = [
+        'message' => 'Team update successfully!',
+      ];
+      wp_send_json_success($response);
+    else:
+      $response = [
+        'message'    => 'Team update fail! => ' . self::$errors->get_error_messages(),
+      ];
+      wp_send_json_error($response, 500);
+    endif;
   }
 
   /**
@@ -166,6 +395,11 @@ class WP_STREAMERS_TEAMS {
     );
   }
 
+  /**
+   * Add metabox
+   *
+   * @return void
+   */
   public static function add_teams_metaboxes(){
     $screens = array('teams');
     add_meta_box(
@@ -179,28 +413,47 @@ class WP_STREAMERS_TEAMS {
     );
   }
 
+  /**
+   * Display team meta data in metabox
+   *
+   * @return void
+   */
   public static function display_teams_fields($post, $meta) {
     wp_nonce_field( basename( __FILE__ ), 'teams_fields' );
     $age_requirement = get_post_meta( $post->ID, 'age_requirement', true );
     $amount_players_needed = get_post_meta( $post->ID, 'amount_players_needed', true );
-    $positions_equired = get_post_meta( $post->ID, 'positions_equired', true );
-    
+    $positions_required = get_post_meta( $post->ID, 'positions_required', true );
+    //print_r($positions_required, false);
     // age required
     $age_requirement_list = self::$age_requirement_list;
     $age_select =   '<label>Age Requirement</label>';
     $age_select .=  '<select class="widefat" name="age_requirement">';
     foreach ($age_requirement_list as $key=>$value):
-      $age_select .= '<option '. selected($age_requirement, $key ) . 'value="'.$key.'">'.$value.'</option>';
+      $age_select .= "<option". selected($age_requirement, $key, false ) . 'value="'.$key.'">'.$value."</option>";
     endforeach;
     $age_select .='</select>';
     echo $age_select;
-
+    
     // position required
-    //$preferred_agent = WP_STREAMER_SETTINGS::$streamer_preferred_agent();
-    //echo '<label>Amount of players needed</label><input type="text" name="amount_players_needed" value="' . esc_html( $amount_players_needed )  . '" class="widefat">';
-    //echo '<label>Positions required</label><input type="text" name="positions_equired" value="' . esc_html( $positions_equired )  . '" class="widefat">';
+    $position_required_list = self::$streamer_preferred_agent;
+    $pr_select  = '<label>Positions required</label>';
+    $pr_select  .= '<select class="widefat" multiple="multiple" name="position_required">';
+    foreach ($position_required_list as $key=>$value):
+      if (isset($positions_required[$key])):
+        $pr_select .= '<option selected="selected" value="'.$key.'">'.$value.'</option>';
+      else:
+        $pr_select .= '<option value="'.$key.'">'.$value.'</option>';
+      endif;
+    endforeach;
+    $pr_select  .= '</select>';
+    echo $pr_select;
   }
 
+  /**
+   * Save team metadata
+   *
+   * @return void
+   */
   public static function save_post_teams( $post_id ) {
         
     if ( wp_is_post_revision( $post_id ) ){
@@ -235,24 +488,35 @@ class WP_STREAMERS_TEAMS {
     endforeach;
   }
 
+  /**
+   * Shortcode for display team data
+   *
+   * @return void
+   */
   public static function display_team() {
     global $post;
-    $age_requirement = get_post_meta($post->ID, 'age_requirement', true) . '+';
+    $age_requirement = get_post_meta($post->ID, 'age_requirement', true);
+    
     $team_type = get_the_terms($post->ID, 'teams-type');
     $all_team_type = get_terms(array(
-      'taxonomy'    =>  'teams-type',
+      'taxonomy'    => 'teams-type',
       'hide_empty'  => false
     ));
+
     $regions = get_the_terms($post->ID, 'valorant-server');
     $all_region = get_terms(array(
-      'taxonomy'    =>  'valorant-server',
+      'taxonomy'    => 'valorant-server',
       'hide_empty'  => false
     ));
+
     $ranks = get_the_terms($post->ID, 'rank-requirement');
     $all_ranks = get_terms(array(
-      'taxonomy'    =>  'rank-requirement',
+      'taxonomy'    => 'rank-requirement',
       'hide_empty'  => false
     ));
+
+    $position_required = get_post_meta($post->ID, 'position_required', true);
+    
     $author = get_userdata($post->post_author);
     $logo = get_the_post_thumbnail($post->ID, array(150,150));
     ob_start();

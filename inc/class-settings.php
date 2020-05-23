@@ -1,4 +1,5 @@
 <?php
+//namespace WP_STREAMER\SETTINGS;
 defined( 'ABSPATH' ) || exit;
 
 class WP_STREAMER_SETTINGS {
@@ -129,7 +130,7 @@ public static function save_data($data){
   
   // description
   if(isset($data['description']) && !preg_match('/(wp-login|wp-admin|\/)/',$data['description'])){
-    $userdata['description'] = $data['description'];
+    $userdata['description'] = sanitize_textarea_field($data['description']);
   } elseif ( !isset($data['description']) ) {
     return;
   } else {  

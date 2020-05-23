@@ -32,13 +32,13 @@ class UPPY_AVATAR {
 			true
 		);
 
-		wp_enqueue_script(
+		/*wp_enqueue_script(
 			'cascadingdropdown',
 			WP_STREAMERS_URL.'asset/cascadingdropdown/jquery.cascadingdropdown.min.js',
 			array('jquery'), 
 			WP_STREAMERS_VERSION,
 			true
-		);
+		);*/
 
 		wp_enqueue_style(
             'uppy-styles', 
