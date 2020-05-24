@@ -133,8 +133,8 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <select name="user_birthday_dd" class="sel-wd-birth-date select" data-placeholder="<?php
-                        _e( 'DD', 'wp-streamers' ); ?>">
-                            <option selected value="<?=$bd[0]?>"></option>
+                        _( 'DD', 'wp-streamers' ); ?>">
+                            <option selected value="<?=$bd[0]?>"><?=$bd[0]?></option>
                             <?php
                             for ( $i = 1; $i < 32; $i++ ) {
                                 echo '<option value="' . $i . '" ' . '>' .
@@ -147,8 +147,9 @@
                     </div>
                     <div class="col-sm-4">
                         <select name="user_birthday_mm" class="sel-wd-birth-month select" data-placeholder="<?php
-                            _e( 'MM', 'wp-streamers' ); ?>">
-                            <option selected value="<?=$bd[1]?>"></option>
+                            _( 'MM', 'wp-streamers' ); ?>">
+                            <option selected value="<?=$bd[1]?>"><?=date_i18n( 'F', mktime( 0, 0, 0, $bd[1], 10 ) )?>
+                            </option>
                             <?php
                             for ( $i = 1; $i < 13; $i++ ) {
                                 echo '<option value="' . $i . '" ' . '>' .
@@ -161,10 +162,10 @@
                     </div>
                     <div class="col-sm-4">
                         <select name="user_birthday_yy" class="sel-wd-birth-year select" data-placeholder="<?php
-                        _e( 'YYYY', 'wp-streamers' ); ?>">
-                            <option selected value="<?=$bd[2]?>"></option>
+                        _( 'YYYY', 'wp-streamers' ); ?>">
+                            <option selected value="<?=$bd[2]?>"><?=$bd[2]?></option>
                             <?php
-                            for ( $i = intval( date('Y') ); $i > 1930; $i-- ) {
+                            for ( $i = intval( date('Y') ); $i > 1970; $i-- ) {
                                 echo '<option value="' . $i . '" ' . '>' .
                                         $i .
                                         '</option>' . "\n";

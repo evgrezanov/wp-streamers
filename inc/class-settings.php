@@ -242,8 +242,8 @@ public static function save_data($data){
         endforeach;
         self::$usermeta['streamer-position-required'] = $pos_array;
       endif;  
-  else:  
-    self::$paerrors->add('required-streamer-pa1', __('Preferred Agent #1 is required field', 'wp-streamer'));
+  //else:  
+    //self::$paerrors->add('required-streamer-pa1', __('Preferred Agent #1 is required field', 'wp-streamer'));
   endif;
 
   //rank
