@@ -98,7 +98,7 @@ class WP_STREAMER_SETTINGS {
       ];
 
       wp_register_script(
-        'streamer-update',
+        'streamer-script',
         WP_STREAMERS_URL.('asset/streamer-script.js')
       );
 

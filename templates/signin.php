@@ -5,14 +5,15 @@
         <label for="streamer_user_login">
             <?php echo __('Username or Email', 'wp-streamers');?>
         </label>
-        <input name="streamer_user_login" id="streamer_user_login" class="required input" type="text" required>
+        <input autocomplete="username" name="streamer_user_login" id="streamer_user_login" class="required input"
+            type="text" required>
     </p>
     <p class="login-password">
         <label for="streamer_user_pass">
             <?php echo __('Password', 'wp-streamers');?>
         </label>
         <input name="streamer_user_pass" id="streamer_user_pass" class="password required input" type="password"
-            required>
+            autocomplete="current-password" required>
     </p>
     <p class="login-remember">
         <label>
