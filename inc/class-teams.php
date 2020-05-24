@@ -92,9 +92,12 @@ class WP_STREAMERS_TEAMS {
         WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
       );
 
+      $position_required = get_post_meta($post->ID, 'position_required', true);
+
       $args = [
-        'team-author' =>  get_current_user_id(),
-        'team-id'     =>  $post->ID
+        'team-author'       =>  get_current_user_id(),
+        'team-id'           =>  $post->ID,
+        'position_required' => $position_required
       ];
 
       wp_register_script(
@@ -202,7 +205,7 @@ class WP_STREAMERS_TEAMS {
       if (!empty($positions)):
         $pos_array=array();
         foreach ($positions as $key => $value) :
-          $pos_array[$value] = $value;
+          $pos_array[] = $value;
         endforeach;
         $team_meta['position_required'] = $pos_array;
       endif;
@@ -435,7 +438,7 @@ class WP_STREAMERS_TEAMS {
     echo $age_select;
     
     // position required
-    $position_required_list = self::$streamer_preferred_agent;
+    /*$position_required_list = self::$streamer_preferred_agent;
     $pr_select  = '<label>Positions required</label>';
     $pr_select  .= '<select class="widefat" multiple="multiple" name="position_required">';
     foreach ($position_required_list as $key=>$value):
@@ -446,7 +449,7 @@ class WP_STREAMERS_TEAMS {
       endif;
     endforeach;
     $pr_select  .= '</select>';
-    echo $pr_select;
+    echo $pr_select;*/
   }
 
   /**

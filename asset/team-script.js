@@ -77,10 +77,10 @@ var FormAjax = function (elementSelector, ep, args = []) {
     };
   });
 };
+var config = window["endpointTeamUpdateProperties"];
 
 var teamUpdate = {
   get_params: function () {
-    var config = window["endpointTeamUpdateProperties"];
     var arrayResult = {};
     arrayResult["team-id"] = config["team-id"];
     arrayResult["team-author"] = config["team-author"];
@@ -111,7 +111,6 @@ var teamUpdate = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  var config = window["endpointTeamUpdateProperties"];
   FormAjax(
     "#streamer-edit-team",
     "streamers/v1/team/update/" + config["team-id"],
@@ -121,7 +120,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Multiselect
 jQuery(document).ready(function ($) {
+  //console.log(config["position_required"]);
   $("#team-positions-requered").selectpicker();
+  $("#team-positions-requered").selectpicker(
+    "val",
+    config["position_required"]
+  );
   $("#team-positions-requered").on("changed.bs.select", function (
     e,
     clickedIndex,
@@ -129,7 +133,6 @@ jQuery(document).ready(function ($) {
     previousValue
   ) {
     var options = $("#team-positions-requered option:selected");
-    //var positionInput = document.getElementById("team-positions-requered-arr");
     var selected = [];
     $(options).each(function () {
       selected.push($(this).val());

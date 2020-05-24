@@ -10,10 +10,10 @@
             <!-- logo upload-->
             <div class="team-logo">
                 <div class="team_avatar">
-                    <?php echo $logo; ?>
+                    <img id="team_logo_img" style="max-width:150px;" src="<?php echo $team_logo; ?>">
                 </div>
                 <button class="btn btn-primary btn-small" id="uppyModalOpenerTeamLogo"
-                    data-user="<?php echo get_current_user_id(); ?>">
+                    data-team-id="<?php echo get_the_ID(); ?>">
                     <?php echo __('Upload team logo', 'wp-streamers'); ?>
                 </button>
             </div>
@@ -26,7 +26,7 @@
                 <!--Team name-->
                 <div class="row">
                     <div class="col-12">
-                        <label for="team-name"><?=__('Team name','wp-streamers')?></label>
+                        <h1><label for="team-name"><?=__('Team name','wp-streamers')?></label></h1>
                         <input style="width:100%;" type="text" class="form-control" id="team-name" name="team-name"
                             value="<?=$post->post_title?>" required>
                         <input type="text" name="team-id" hidden value="<?=the_id()?>" requered>
@@ -98,7 +98,6 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="form-group">
-                            <?php //var_dump($position_required)?>
                             <label for="team-positions-requered"><?=__('Positions required','wp-streamers')?></label>
                             <select class="form-control" tabindex="-98" data-header="Select a required positions"
                                 id="team-positions-requered" name="team-positions-requered" multiple

@@ -4,6 +4,7 @@
  */
 
 (function ($) {
+  // ------------------------------------------------------------avatar upload
   var btn = document.querySelector("#uppyModalOpener");
   userid = btn.getAttribute("data-user");
   url = "/wp-json/streamers/v1/avatar/upload/" + userid;
@@ -50,7 +51,7 @@
     $("#streamer_img").attr("src", thumbnail);
   });
 
-  // rank verify
+  // ------------------------------------------------------------rank verify
   var rankVerifyBtn = document.querySelector("#uppyModalOpenerRankVerify");
   userid = rankVerifyBtn.getAttribute("data-user");
   url = "/wp-json/streamers/v1/rank_verify/upload/" + userid;
@@ -95,5 +96,52 @@
   uppyRank.on("upload-success", (file, body) => {
     var thumbnail = body.body.thumbnail;
     $("#rank_verification_img").attr("src", thumbnail);
+  });
+
+  // ------------------------------------------------------------team logo
+  var teamLogoBtn = document.querySelector("#uppyModalOpenerRankVerify");
+  teamid = teamLogoBtn.getAttribute("data-team-id");
+  url = "/wp-json/streamers/v1/team_logo/upload/" + teamid;
+
+  const uppyTeamLogo = Uppy.Core({
+    allowMultipleUploads: false,
+    debug: false,
+    autoProceed: false,
+    restrictions: {
+      maxFileSize: 2000000,
+      maxNumberOfFiles: 1,
+      minNumberOfFiles: 1,
+      allowedFileTypes: ["image/*"],
+    },
+  })
+
+    .use(Uppy.Dashboard, {
+      id: "Dashboard",
+      target: "body",
+      trigger: "#uppyModalOpenerTeamLogo",
+      hideProgressAfterFinish: true,
+      closeModalOnClickOutside: true,
+      closeAfterFinish: true,
+      proudlyDisplayPoweredByUppy: false,
+    })
+
+    .use(Uppy.Webcam, {
+      target: Uppy.Dashboard,
+      countdown: false,
+      modes: ["picture"],
+      mirror: false,
+      facingMode: "user",
+    })
+
+    .use(Uppy.XHRUpload, {
+      endpoint: url,
+      fieldName: "team_logo_upload",
+    });
+
+  uppyTeamLogo.run();
+
+  uppyTeamLogo.on("upload-success", (file, body) => {
+    var thumbnail = body.body.thumbnail;
+    $("#team_logo_img").attr("src", thumbnail);
   });
 })(window.jQuery);
