@@ -44,6 +44,8 @@ class WP_STREAMERS {
         // require team functions
         require_once('inc/class-teams.php');
 
+         // require team functions
+         require_once('inc/class-team-finder.php');
 
         // add Streamers role based subscribers role capabilities
         register_activation_hook( __FILE__, function(){

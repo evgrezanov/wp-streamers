@@ -24,14 +24,6 @@ class UPPY_AVATAR {
 			true
 		);
 
-		/*wp_enqueue_script(
-			'streamers_pa',
-			WP_STREAMERS_URL.'asset/script.js',
-			array('jquery'), 
-			WP_STREAMERS_VERSION,
-			true
-		);*/
-
 		wp_enqueue_style(
             'uppy-styles', 
             WP_STREAMERS_URL . 'asset/uppy/uppy.min.css'

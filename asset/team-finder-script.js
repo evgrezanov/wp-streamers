@@ -1,80 +1,7 @@
-// Validate
-//has uppercase
-window.Parsley.addValidator("uppercase", {
-  requirementType: "number",
-  validateString: function (value, requirement) {
-    var uppercases = value.match(/[A-Z]/g) || [];
-    return uppercases.length >= requirement;
-  },
-  messages: {
-    en: "Your password must contain at least (%s) uppercase letter.",
-  },
-});
-
-//has lowercase
-window.Parsley.addValidator("lowercase", {
-  requirementType: "number",
-  validateString: function (value, requirement) {
-    var lowecases = value.match(/[a-z]/g) || [];
-    return lowecases.length >= requirement;
-  },
-  messages: {
-    en: "Your password must contain at least (%s) lowercase letter.",
-  },
-});
-
-//has number
-window.Parsley.addValidator("number", {
-  requirementType: "number",
-  validateString: function (value, requirement) {
-    var numbers = value.match(/[0-9]/g) || [];
-    return numbers.length >= requirement;
-  },
-  messages: {
-    en: "Your password must contain at least (%s) number.",
-  },
-});
-/*
-window.ParsleyValidator.addValidator(
-  "emailexist",
-  function (value) {
-    var valid = false;
-    $.ajax({
-      url: "/data/checkout/cvvCheck.json",
-      data: {
-        cvv: value,
-      },
-      async: false,
-      success: function (response) {
-        if (response.valid === true) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-    });
-  },
-  32
-);
-
-(function ($) {
-  //$(document).ready(function () {
-  $("#streamer-signup")
-    .parsley()
-    .on("field:validated", function () {
-      var ok = $(".parsley-error").length === 0;
-      $(".bs-callout-info").toggleClass("hidden", !ok);
-      $(".bs-callout-warning").toggleClass("hidden", ok);
-    })
-    .on("form:submit", function () {
-      return false; // Don't submit form for this demo
-    });
-  //});
-})(window.jQuery);*/
 /**
  * from https://gist.github.com/uptimizt/34ce8e582e256eb2c3c3b612b23188a0
- */
-var SignUpAjax = function (elementSelector, ep, args = []) {
+ 
+var FormAjax = function (elementSelector, ep, args = []) {
   if (document.querySelector(elementSelector)) {
     var form = document.querySelector(elementSelector);
   } else {
@@ -150,8 +77,8 @@ var SignUpAjax = function (elementSelector, ep, args = []) {
     };
   });
 };
-var config = window["endpointTeamUpdateProperties"];
-
+var config = window["endpointTeamUpdateProperties"];*/
+/*
 var teamUpdate = {
   get_params: function () {
     var arrayResult = {};
@@ -183,14 +110,15 @@ var teamUpdate = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  SignUpAjax(
+  FormAjax(
     "#streamer-edit-team",
-    "streamers/v1/streamer/register/",
+    "streamers/v1/team/update/" + config["team-id"],
     teamUpdate.get_params()
   );
 });
-
+*/
 // Multiselect
+/*
 jQuery(document).ready(function ($) {
   //console.log(config["position_required"]);
   $("#team-positions-requered").selectpicker();
@@ -211,4 +139,9 @@ jQuery(document).ready(function ($) {
     });
     $("#team-positions-requered-arr").val(JSON.stringify(selected));
   });
+});
+*/
+// DataTable
+jQuery(document).ready(function ($) {
+  $("#team-finder").DataTable();
 });

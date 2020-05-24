@@ -37,7 +37,6 @@
                                 data-parsley-required-message="Please enter your password." data-parsley-uppercase="1"
                                 data-parsley-lowercase="1" data-parsley-number="1" autocomplete="new-password"
                                 placeholder="Password" required />
-                            <span class="errorspannewpassinput"></span>
                         </div>
                     </div>
                 </div>
