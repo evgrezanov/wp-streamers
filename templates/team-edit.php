@@ -9,11 +9,11 @@
         <div class="col-md-4 order-md-1 mb-4">
             <!-- logo upload-->
             <div class="team-logo">
-                <div class="team_avatar">
-                    <img id="team_logo_img" style="max-width:150px;" src="<?php echo $team_logo; ?>">
+                <div class="team-logo">
+                    <img id="team_logo_img" style="max-width:150px;" src="<?php echo $logo; ?>">
                 </div>
                 <button class="btn btn-primary btn-small" id="uppyModalOpenerTeamLogo"
-                    data-team-id="<?php echo get_the_ID(); ?>">
+                    data-team="<?php echo get_the_ID(); ?>">
                     <?php echo __('Upload team logo', 'wp-streamers'); ?>
                 </button>
             </div>
@@ -110,7 +110,6 @@
                                 value="">
                         </div>
                     </div>
-
                 </div>
                 <!-- About: -->
                 <div class="row">

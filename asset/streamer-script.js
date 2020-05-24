@@ -1,6 +1,6 @@
 /**
  * from https://gist.github.com/uptimizt/34ce8e582e256eb2c3c3b612b23188a0
- */
+
 var FormAjax = function (elementSelector, ep, args = []) {
   if (document.querySelector(elementSelector)) {
     var form = document.querySelector(elementSelector);
@@ -77,7 +77,6 @@ var FormAjax = function (elementSelector, ep, args = []) {
     };
   });
 };
-var config = window["endpointTeamUpdateProperties"];
 
 var teamUpdate = {
   get_params: function () {
@@ -116,26 +115,27 @@ document.addEventListener("DOMContentLoaded", function () {
     teamUpdate.get_params()
   );
 });
+ */
+var config = window["endpointStreamerUpdateSettings"];
 
 // Multiselect
 jQuery(document).ready(function ($) {
-  //console.log(config["position_required"]);
-  $("#team-positions-requered").selectpicker();
-  $("#team-positions-requered").selectpicker(
+  $("#streamer-preferred-agent").selectpicker();
+  $("#streamer-preferred-agent").selectpicker(
     "val",
     config["position_required"]
   );
-  $("#team-positions-requered").on("changed.bs.select", function (
+  $("#streamer-preferred-agent").on("changed.bs.select", function (
     e,
     clickedIndex,
     isSelected,
     previousValue
   ) {
-    var options = $("#team-positions-requered option:selected");
+    var options = $("#streamer-preferred-agent option:selected");
     var selected = [];
     $(options).each(function () {
       selected.push($(this).val());
     });
-    $("#team-positions-requered-arr").val(JSON.stringify(selected));
+    $("#streamer-preferred-agent-arr").val(JSON.stringify(selected));
   });
 });

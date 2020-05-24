@@ -97,7 +97,7 @@ class WP_STREAMERS_TEAMS {
       $args = [
         'team-author'       =>  get_current_user_id(),
         'team-id'           =>  $post->ID,
-        'position_required' => $position_required
+        'position_required' =>  $position_required
       ];
 
       wp_register_script(
@@ -521,7 +521,7 @@ class WP_STREAMERS_TEAMS {
     $position_required = get_post_meta($post->ID, 'position_required', true);
     
     $author = get_userdata($post->post_author);
-    $logo = get_the_post_thumbnail($post->ID, array(150,150));
+    $logo = UPPY_AVATAR::get_team_logo($post->ID, 'tumbnail');
     ob_start();
       if ( is_user_logged_in() && $post->post_author == get_current_user_id() ):
         require_once plugin_dir_path(__DIR__).'templates/team-edit.php';

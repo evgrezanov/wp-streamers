@@ -196,57 +196,22 @@
                 </div>
 
                 <!--Preferred Agent #1-->
-                <div class="mb-3">
-                    <div class="form-group">
-                        <label for="streamer-pa1">Preferred Agent #1</label>
-                        <select id="streamer-pa1" class="form-control" name="streamer-pa1" required>
-                            <?php 
-                            isset($usermeta['streamer-pa1'][0]) ? $pa1 = $usermeta['streamer-pa1'][0] : $pa1='';                            
-                            foreach ($preferred_agent as $key=>$value):
-                        ?>
-                            <option <?=selected($usermeta['streamer-pa1'][0], $key )?> value="<?=$key?>"><?=$value?>
-                            </option>
-                            <?php
-                        endforeach;
-                        ?>
-                        </select>
-                    </div>
-                </div>
-
-                <!--Preferred Agent #2-->
-                <div class="mb-3">
-                    <div class="form-group">
-                        <label for="streamer-pa2">Preferred Agent #2</label>
-                        <select id="streamer-pa2" class="form-control" name="streamer-pa2">
-                            <?php 
-                            isset($usermeta['streamer-pa2'][0]) ? $pa2 = $usermeta['streamer-pa2'][0] : $pa2='';                            
-                        foreach ($preferred_agent as $key=>$value):
-                        ?>
-                            <option <?=selected($usermeta['streamer-pa2'][0], $key )?> value="<?=$key?>"><?=$value?>
-                            </option>
-                            <?php
-                        endforeach;
-                        ?>
-                        </select>
-                    </div>
-                </div>
-
-                <!--Preferred Agent #3-->
-                <div class="mb-3">
-                    <div class="form-group">
-                        <label for="streamer-pa3">Preferred Agent #3</label>
-                        <select id="streamer-pa3" class="form-control" name="streamer-pa3">
-                            <?php
-                            isset($usermeta['streamer-pa3'][0]) ? $pa3 = $usermeta['streamer-pa3'][0] : $pa3='';                            
- 
-                        foreach ($preferred_agent as $key=>$value):
-                        ?>
-                            <option <?=selected($usermeta['streamer-pa3'][0], $key )?> value="<?=$key?>"><?=$value?>
-                            </option>
-                            <?php
-                        endforeach;
-                        ?>
-                        </select>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label
+                                for="streamer-preferred-agent"><?=__('Preferred Agent (maximum 3 item)','wp-streamers')?></label>
+                            <select class="form-control" tabindex="-98"
+                                data-header="<?=__('Select a preferred agent (max 3 items)','wp-streamers')?>"
+                                id="streamer-preferred-agent" name="streamer-preferred-agent" multiple
+                                data-actions-box="true" data-max-options="3">
+                                <?php foreach (WP_STREAMER_SETTINGS::$streamer_preferred_agent as $key=>$value): ?>
+                                <option value="<?=$key?>"><?=$value?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <input type="hidden" id="streamer-preferred-agent-arr" name="streamer-preferred-agent-arr"
+                                value="">
+                        </div>
                     </div>
                 </div>
 

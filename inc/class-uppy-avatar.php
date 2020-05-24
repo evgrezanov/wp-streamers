@@ -78,7 +78,7 @@ class UPPY_AVATAR {
 		  ));
 		register_rest_route( 'streamers/v1', '/team_logo/upload/(?P<id>[\d]+)', array(
 			'methods' => 'POST',
-			'callback' => [__CLASS__, 'team_logo_upload'],
+			'callback' => [__CLASS__, 'rest_team_logo_upload'],
 	        'args' => [
 				'id' => [
 					'required' => true,
@@ -236,10 +236,11 @@ class UPPY_AVATAR {
 
 	public static function get_team_logo($team_id, $size) {
 		$attachment_id = get_post_thumbnail_id( $team_id );
+		//return <img>
 		$team_logo = wp_get_attachment_image( $attachment_id, 'tumbnail' );
-   		$default_url = WP_STREAMERS_URL . WP_STREAMERS_NO_IMG;
+		$default_url = WP_STREAMERS_URL . WP_STREAMERS_NO_IMG;
    		if (!empty($team_logo)) {
-			$avatar_url = wp_get_attachment_image_url($team_logo, 'tumbnail', false);
+			$avatar_url = wp_get_attachment_image_url($attachment_id, 'tumbnail', false);
 			return $avatar_url;
 		} else {
 	   		return $default_url;
@@ -247,7 +248,7 @@ class UPPY_AVATAR {
 	}
 
 	public static function rest_team_logo_upload($request){
-		$team_id = $request->get_param('team_id');
+		$team_id = $request->get_param('id');
 		
 		if(empty((int)$team_id)){
 			return new \WP_Error( '500', __('Team id not defined', 'wp-streamers'));
@@ -258,7 +259,7 @@ class UPPY_AVATAR {
     		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		}
 
-		$uploadedfile = $_FILES['team_logo'];
+		$uploadedfile = $_FILES['team_logo_upload'];
 		$upload_overrides = array( 'test_form' => false );
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 		$msg = '';
@@ -277,9 +278,10 @@ class UPPY_AVATAR {
 			require_once( ABSPATH . 'wp-admin/includes/image.php' );
 			$attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
 			wp_update_attachment_metadata( $attach_id, $attach_data );
-			$msg = __('Rank verification image successfully updated', 'wp-streamers');
+			$msg = __('Team logo image successfully updated', 'wp-streamers');
 			// get image
 			$team_logo_tumb = wp_get_attachment_image_url( $attach_id, 'thumbnail', false );
+			//$thumbnail = wp_get_attachment_image_url( $attach_id, 'thumbnail', false );
 			set_post_thumbnail($team_id, $attach_id);
 		} else {
 	    	/**
@@ -288,14 +290,13 @@ class UPPY_AVATAR {
 	     	*/
     		$msg =  $movefile['error'];
 		}
-
+		
 	 	if ($msg) {
 	   		$data = array(
-		 		'profile_user_id' 	=> (int)$current_user_id,
+		 		'team_id' 			=> (int)$team_id,
 		 		'result' 			=> $msg,
 				'url' 				=> $movefile['url'],
-				'thumbnail' 		=> $thumbnail,
-				'user_profile' 		=> $user_profile
+				'thumbnail'			=> $team_logo_tumb
 	   		);
 			return new \WP_REST_Response( $data, 200, $movefile['url'] );
 	 	} else {

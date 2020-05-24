@@ -1,5 +1,4 @@
 <?php
-//namespace WP_STREAMER\SETTINGS;
 defined( 'ABSPATH' ) || exit;
 
 class WP_STREAMER_SETTINGS {
@@ -7,6 +6,8 @@ class WP_STREAMER_SETTINGS {
   public static $usermeta;
   
   public static $paerrors;
+
+  public static $profile_page_slug = 'me';
   
   // default value for rank field
   public static $streamer_rank = array(
@@ -40,7 +41,83 @@ class WP_STREAMER_SETTINGS {
     add_action('streamer_save_date', [__CLASS__, 'save_data']);
     add_action('display_notice', [__CLASS__, 'notice']);
     add_action('init', [__CLASS__, 'save_settings_form']);
-}
+    add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+  }
+
+  /**
+   * add scripts
+   *
+   */  
+  public static function assets(){
+    global $post;
+    if ( $post->post_name == self::$profile_page_slug):
+      wp_enqueue_script('wp-api');
+      
+      wp_enqueue_script(
+        'popper-js',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
+        ['jquery'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-js',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
+        ['jquery', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-bundle',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.bundle.min.js'),
+        ['jquery', 'bootstrap-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-select',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
+        ['jquery', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_style(
+        'bootstrap-select', 
+        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
+      );
+
+      $current_agents = get_user_meta(get_current_user_id(), "streamer-position-required", true);
+
+      $args = [
+        'user-id'           =>  get_current_user_id(),
+        'position_required' =>  $current_agents
+      ];
+
+      wp_register_script(
+        'streamer-update',
+        WP_STREAMERS_URL.('asset/streamer-script.js')
+      );
+
+      wp_localize_script(
+        'streamer-update',
+        'endpointStreamerUpdateSettings',
+        $args
+      );
+
+      wp_enqueue_script(
+        'streamer-update',
+        WP_STREAMERS_URL.('asset/streamer-script.js'),
+        ['jquery','bootstrap-select', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        WP_STREAMERS_VERSION,
+        true
+      );
+    endif;  
+  }
+
 
 public static function personal_area(){
   ob_start();
@@ -155,21 +232,18 @@ public static function save_data($data){
     endif;  
   endif;
 
-  // streamer-pa1
-  if(isset($data['streamer-pa1']) && !empty($data['streamer-pa1'])):  
-    self::$usermeta['streamer-pa1'] = $data['streamer-pa1'];
+  // streamer-preferred-agent
+  if(isset($data['streamer-preferred-agent-arr']) && !empty($data['streamer-preferred-agent-arr'])):
+    $positions = json_decode(stripslashes($data['streamer-preferred-agent-arr']));
+      if (!empty($positions)):
+        $pos_array=array();
+        foreach ($positions as $key => $value) :
+          $pos_array[] = $value;
+        endforeach;
+        self::$usermeta['streamer-position-required'] = $pos_array;
+      endif;  
   else:  
-    self::$paerrors->add('required-streamer-pa1', sprintf('Preferred Agent #1 is required field',$data['streamer-pa1']));
-  endif;
-
-  // streamer-pa2
-  if(isset($data['streamer-pa2']) && !empty($data['streamer-pa2'])):
-    self::$usermeta['streamer-pa2'] = $data['streamer-pa2'];
-  endif;
-
-  // streamer-pa3
-  if(isset($data['streamer-pa3']) && !empty($data['streamer-pa3'])):
-    self::$usermeta['streamer-pa3'] = $data['streamer-pa3'];
+    self::$paerrors->add('required-streamer-pa1', __('Preferred Agent #1 is required field', 'wp-streamer'));
   endif;
 
   //rank
