@@ -292,7 +292,23 @@ class WP_TEAMS_FINDER {
 	    'order'       => 'DESC',
     );
     $teams = get_posts($arg);
-    //var_dump($teams);
+
+    $all_team_type = get_terms(array(
+      'taxonomy'    => 'teams-type',
+      'hide_empty'  => false
+    ));
+
+    $all_region = get_terms(array(
+      'taxonomy'    => 'valorant-server',
+      'hide_empty'  => false
+    ));
+
+    $all_ranks = get_terms(array(
+      'taxonomy'    => 'rank-requirement',
+      'hide_empty'  => false
+    ));
+    $ages = WP_STREAMERS_TEAMS::$age_requirement_list;
+    $agents = WP_STREAMERS_TEAMS::$streamer_preferred_agent;
     ob_start();
     require_once plugin_dir_path(__DIR__).'templates/team-finder.php';
     wp_reset_postdata();

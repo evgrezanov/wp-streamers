@@ -144,16 +144,17 @@ jQuery(document).ready(function ($) {
 // DataTable
 jQuery(document).ready(function ($) {
   $("#team-finder").DataTable({
+    responsive: true,
+    /*searchPanes: true,
     initComplete: function () {
       this.api()
         .columns()
         .every(function () {
           var column = this;
           var select = $('<select><option value=""></option></select>')
-            .appendTo($(column.header()).empty())
+            .appendTo($(column.header()))
             .on("change", function () {
               var val = $.fn.dataTable.util.escapeRegex($(this).val());
-
               column.search(val ? "^" + val + "$" : "", true, false).draw();
             });
 
@@ -165,6 +166,6 @@ jQuery(document).ready(function ($) {
               select.append('<option value="' + d + '">' + d + "</option>");
             });
         });
-    },
+    },*/
   });
 });
