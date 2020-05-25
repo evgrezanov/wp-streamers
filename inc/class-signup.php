@@ -10,8 +10,8 @@ class WP_STREAMER_SIGNUP {
       add_action('streamer_registration', [__CLASS__, 'registration']);
       add_action('display_notice', [__CLASS__, 'notice']);
       add_action('init', [__CLASS__, 'save_reg_form']);
-      add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
-      add_action('rest_api_init', [__CLASS__, 'wp_rest_user_endpoints']);
+      //add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+      //add_action('rest_api_init', [__CLASS__, 'wp_rest_user_endpoints']);
   }
 
   /**
@@ -250,13 +250,6 @@ class WP_STREAMER_SIGNUP {
       WP_STREAMERS_URL . 'asset/bootstrap/bootstrap.min.css'
     );
 
-    wp_enqueue_script(
-      'parsley-js',
-      WP_STREAMERS_URL.('asset/parsley/parsley.min.js'),
-      ['jquery', 'bootstrap-js'],
-      WP_STREAMERS_VERSION,
-      false
-    );
 
     /*wp_enqueue_script( 
       'signup-script', 

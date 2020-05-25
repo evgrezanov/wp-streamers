@@ -38,7 +38,7 @@ class WP_TEAMS_FINDER {
     // init rest
     add_action('rest_api_init', [__CLASS__, 'rest_api_init']);
     // assets
-    add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+    //add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
   }
 
   /**

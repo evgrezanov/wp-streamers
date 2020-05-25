@@ -250,8 +250,12 @@ class WP_STREAMERS_TEAMS {
       ];
       wp_send_json_success($response);
     else:
+      $tmp='';
+      foreach (self::$errors->get_error_messages() as $msg):
+        $tmp.= $msg.'<br>';
+      endforeach;
       $response = [
-        'message'    => 'Team update fail! => ' . self::$errors->get_error_messages(),
+        'message'    => 'Team update fail! => ' . $tmp,
       ];
       wp_send_json_error($response, 500);
     endif;

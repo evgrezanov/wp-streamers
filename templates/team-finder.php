@@ -71,26 +71,8 @@
 
 
                 </div>
-                <!--<div class="form-row align-items-center">
-                    <input style="width:100%;" type="text" class="form-control" id="team-name" name="team-name" value=""
-                        required>
-                </div>
-                <div class="collapse" id="collapseAddNewTeam">
-                    <div class="form-row align-items-center">
-                        <input style="width:100%;" type="text" class="form-control" id="team-name" name="team-name"
-                            value="" required>
-                    </div>
-                </div>-->
-
             </form>
         </div>
-        <!--<div class="float-right">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseAddNewTeam"
-                aria-expanded="false" aria-controls="collapseAddNewTeam">
-                Add new team
-            </button>
-        </div>-->
-
     </div>
 </div>
 <div class="row">
