@@ -1,5 +1,6 @@
 <?php
 defined( 'ABSPATH' ) || exit;
+//Breach, Brimstone, Cypher, Jett, Omen, Phoenix, Raze, Sage, Sova, Viper
 class WP_STREAMERS_TEAMS {
 
   public static $errors;
