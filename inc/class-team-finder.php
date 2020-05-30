@@ -88,7 +88,7 @@ class WP_TEAMS_FINDER {
       );
 
       $args = [
-        'team-author'       =>  get_current_user_id(),
+        'user-id'       =>  get_current_user_id(),
       ];
 
       wp_register_script(
@@ -119,121 +119,118 @@ class WP_TEAMS_FINDER {
    * @url /wp-json/sstreamers/v1/team/update/
    */
   public static function rest_api_init() {
-    register_rest_route('streamers/v1', '/team/add/(?P<id>[\d]+)', [
+    register_rest_route('streamers/v1', '/team/quick_add_new/(?P<id>[\d]+)', [
       'methods'  => 'POST',
-      'callback' => [__CLASS__, 'quick_team_add']
+      'callback' => [__CLASS__, 'quick_add_new'],
+      'args' => [
+				'id' => [
+					'required' => true,
+					'validate_callback' => function($param, $request, $key) {
+						return is_numeric( $param );
+					},
+				]
+			],
     ]);
   }
 
-  public static function quick_team_add(){
-    $user_id = get_current_user_id();
+  public static function quick_add_new(){
+     
     $team_data = array();
     $team_meta = array();
     self::$errors = new \WP_Error();
     
-    if(! empty($_REQUEST['team-id'])):
-      $team = get_post($_REQUEST['team-id']);
-      $team_data['ID'] = $_REQUEST['team-id'];
+    if( !empty($_REQUEST['user-id']) ):
+      $userID = $_REQUEST['user-id'];
     else:
-      self::$errors->add('0', 'Cannot take team object for edit!');
+      self::$errors->add('0', 'User can not be empty!');
     endif;
 
     //post_title
     if(! empty($_REQUEST['team-name'])){
-      $team_data['post_title'] = wp_strip_all_tags($_REQUEST['team-name']);
-      $team->post_title = wp_strip_all_tags($_REQUEST['team-name']);
+      $teamTitle = wp_strip_all_tags($_REQUEST['team-name']);
     } else {
       self::$errors->add('1', 'Team name is empty! Add team name!');
     }
 
-    // description
-    if(isset($_REQUEST['team-description']) && !preg_match('/(wp-login|wp-admin|\/)/',$_REQUEST['team-description'])){
-      $team->post_content = sanitize_textarea_field($_REQUEST['team-description']);
-      $team_data['post_content'] = sanitize_textarea_field($_REQUEST['team-description']);
-    } else {  
-      self::$errors->add('2', sprintf('Invalid characters in team description %s',$_REQUEST['team-description']));
-    }
-
     // Team type
     if(isset($_REQUEST['team-type']) && !empty($_REQUEST['team-type'])){
-      self::$team_terms['teams-type'] = $_REQUEST['team-type'];
+      $teamsTypeArray = array();
+      $teamsTypeArray[] = (int)$_REQUEST['team-type'];
     } else {  
-      self::$errors->add('3', 'Input valid team type!');
+      self::$errors->add('2', 'Input valid team type!');
     }
 
     // Region
     if(isset($_REQUEST['team-region']) && !empty($_REQUEST['team-region'])){
-      self::$team_terms['valorant-server'] = $_REQUEST['team-region'];
+      //$teamsRegionArray = array();
+      $teamsRegion = (int)$_REQUEST['team-region'];
     } else {  
       self::$errors->add('3', 'Input valid team region!');
     }
     
     // Rank Requirements
-    if(isset($_REQUEST['team-rank-requirements']) && !empty($_REQUEST['team-rank-requirements'])){
-      self::$team_terms['rank-requirement'] = $_REQUEST['team-rank-requirements'];
+    if(isset($_REQUEST['team-rank']) && !empty($_REQUEST['team-rank'])){
+      $teamsRank = (int)$_REQUEST['team-rank'];
     } else {  
-      self::$errors->add('3', 'Input valid team rank requirements region!');
+      self::$errors->add('4', 'Input valid team rank requirements!');
     }
 
     // Age Requirement
     if(isset($_REQUEST['team-age-requirement']) && !empty($_REQUEST['team-age-requirement'])){
-      $team_meta['age_requirement'] = $_REQUEST['team-age-requirement'];
+      $ageRequirement = $_REQUEST['team-age-requirement'];
     } else {  
-      self::$errors->add('3', 'Input valid team age requirement region!');
+      self::$errors->add('5', 'Input valid team age requirement region!');
     }
 
     //Positions required
-    if(isset($_REQUEST['team-positions-requered-arr']) && !empty($_REQUEST['team-positions-requered-arr'])){
-      $positions = json_decode(stripslashes($_REQUEST['team-positions-requered-arr']));
-      if (!empty($positions)):
-        $pos_array=array();
-        foreach ($positions as $key => $value) :
-          $pos_array[] = $value;
-        endforeach;
-        $team_meta['position_required'] = $pos_array;
-      endif;
-    } else {  
+    if(isset($_REQUEST['team-agent']) && !empty($_REQUEST['team-agent'])):
+      $pos_array=array();
+      $pos_array[] = $_REQUEST['team-agent'];
+      $positionRequired = $pos_array;
+    else:  
       self::$errors->add('7', 'Input valid positions requered field!');
-    }
-
+    endif;
+  
     // check errors and update team
     if( empty( self::$errors->get_error_messages() ) ) :
-      // set team terms
-      $team_terms = self::$team_terms;
-      foreach ($team_terms as $key=>$value):
-        $terms = wp_set_post_terms($team->ID, [(int)$value], $key, false);
-        if (!$terms):
-          self::$errors->add('5', __('$post_id не число или равно 0.', 'wp-streamers'));
-        endif;
-        if ( is_wp_error($terms) ):
-          self::$errors->add('6', $terms->get_error_messages());
-        endif;
-        //error_log($terms);
-      endforeach;
+      // вставляем запись в базу данных
+      $post_id = wp_insert_post(  wp_slash( array(
+        'post_status'   => 'draft',
+        'post_title'    => $teamTitle,
+        'post_type'     => 'teams',
+        'post_author'   => $userID,
+        'tax_input'     => array( 
+          'teams-type'      => $teamsTypeArray
+        ), 
+        'meta_input'    => [ 
+          'age_requirement' => $ageRequirement,
+          'position_required' => $positionRequired,
+        ],
+      ) ) );
 
-      // add meta 
-      if (!empty($team_meta)):
-        foreach ($team_meta as $key=>$value):
-          update_post_meta($team->ID, $key, $value);
-        endforeach;
-      endif;
-      
-      $result = wp_update_post( $team, true );
-      
-      if (is_wp_error($result)):
+      if (is_wp_error($post_id)):
         self::$errors->add('4', $result->get_error_messages());
+      else: 
+        //set current terms rank-requirement and valorant-server
+        wp_set_object_terms( $post_id, array($teamsRank), 'rank-requirement' );
+        wp_set_object_terms( $post_id, array($teamsRegion), 'valorant-server' );
       endif;
 
     endif;
 
     if ( empty( self::$errors->get_error_messages() ) ):
       $response = [
-        'message' => 'Team update successfully!',
+        'message' => 'Team insert successfully!',
       ];
       wp_send_json_success($response);
     else:
+      $all_errors = self::$errors->get_error_messages();
+      $msg = '';
+        foreach ($all_errors as $key => $value) {
+          $msg .= $value.' / ';
+        }
       $response = [
-        'message'    => 'Team update fail! => ' . self::$errors->get_error_messages(),
+        'message'    => 'Team insert fail! => ' . $msg,
       ];
       wp_send_json_error($response, 500);
     endif;
@@ -286,7 +283,7 @@ class WP_TEAMS_FINDER {
   public static function display_team_finder() {
     $arg = array(
       'post_type'   => 'teams',
-      'status'      => 'published',
+      'post_status' => 'any',
       'numberposts' => -1,
       'orderby'     => 'date',
 	    'order'       => 'DESC',
@@ -307,6 +304,7 @@ class WP_TEAMS_FINDER {
       'taxonomy'    => 'rank-requirement',
       'hide_empty'  => false
     ));
+    
     $ages = WP_STREAMERS_TEAMS::$age_requirement_list;
     $agents = WP_STREAMERS_TEAMS::$streamer_preferred_agent;
     ob_start();

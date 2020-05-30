@@ -2,8 +2,10 @@
 ?>
 <div class="row">
     <div class="col-12">
-        <div class="float-left">
-            <form>
+        <div id="teamFinderAddResponse">
+        </div>
+        <div>
+            <form id="team-finder-add-new" type="post">
                 <div class="form-row align-items-center">
                     <div class="col-auto">
                         <h8>Team type</h8>
@@ -51,7 +53,7 @@
                     </div>
                     <div class="col-auto">
                         <h8>Agents</h8>
-                        <select class="form-control" id="team-preferred-agent" name="team-preferred-agent">
+                        <select class="form-control" id="team-agent" name="team-agent">
                             <option value></option>
                             <?php 
                     foreach ($agents as $key=>$value): ?>
@@ -64,10 +66,9 @@
                         <input type="text" class="form-control" id="team-name" name="team-name" value="" required>
                     </div>
                     <div class="col-auto">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse"
-                            data-target="#collapseAddNewTeam" aria-expanded="false" aria-controls="collapseAddNewTeam">
-                            <?=__('Add new team', 'wp-streamer')?>
-                        </button>
+                        <input type="hidden" id="user-id" name="user-id"
+                            value="<?php echo is_user_logged_in() ? get_current_user_id() : ''?>">
+                        <input class="btn btn-primary" type="submit" value="<?=__('Add new team', 'wp-streamer')?>">
                     </div>
                 </div>
             </form>
@@ -85,6 +86,8 @@
                 <th><?=__('Rank', 'wp-streamer')?></th>
                 <th><?=__('Age', 'wp-streamer')?></th>
                 <th><?=__('Position', 'wp-streamer')?></th>
+                <th><?=__('Date', 'wp-streamer')?></th>
+                <th><?=__('Status', 'wp-streamer')?></th>
                 <th></th>
             </tr>
         </thead>
@@ -98,9 +101,11 @@
                 $position_required = get_post_meta($team->ID, 'position_required', true);
                 $team_logo = UPPY_AVATAR::get_team_logo($team->ID,'tumbnail');
                 $position_str='';
-                foreach ($position_required as $key=>$value):
-                    $position_str .= '<span class="badge badge-dark">'.$value.'</span> ';
-                endforeach;
+                if (is_array($position_required)):
+                    foreach ($position_required as $key=>$value):
+                        $position_str .= '<span class="badge badge-dark">'.$value.'</span> ';
+                    endforeach;
+                endif;
 	        ?>
             <tr>
                 <td><img class="team_finder_team_logo" style="max-width:50px;" src="<?php echo $team_logo; ?>"></td>
@@ -110,6 +115,9 @@
                 <td><?=$rank[0]->name?></td>
                 <td><?=$age_requirement?>+</td>
                 <td><?=$position_str?></td>
+                <td><?=get_the_date('d/m/Y', $team->post_ID)?></td>
+                <td><?php echo $team->post_status != 'publish' ?  '<span class="badge badge-secondary">draft</span>' :'<span class="badge badge-success">verified</span>';?>
+                </td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm"><?=__('Send invite', 'wp-streamer')?></button>
                     <a type="button" class="btn btn-info btn-sm"
@@ -124,12 +132,14 @@
         <tfoot>
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Region</th>
-                <th>Rank </th>
-                <th>Age</th>
-                <th>Position</th>
+                <th><?=__('Team name', 'wp-streamer')?></th>
+                <th><?=__('Type', 'wp-streamer')?></th>
+                <th><?=__('Region', 'wp-streamer')?></th>
+                <th><?=__('Rank', 'wp-streamer')?></th>
+                <th><?=__('Age', 'wp-streamer')?></th>
+                <th><?=__('Position', 'wp-streamer')?></th>
+                <th><?=__('Date', 'wp-streamer')?></th>
+                <th><?=__('Status', 'wp-streamer')?></th>
                 <th></th>
             </tr>
         </tfoot>
