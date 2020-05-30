@@ -307,10 +307,33 @@ class WP_TEAMS_FINDER {
     
     $ages = WP_STREAMERS_TEAMS::$age_requirement_list;
     $agents = WP_STREAMERS_TEAMS::$streamer_preferred_agent;
+    $current_team = self::get_current_streamer_team();
     ob_start();
     require_once plugin_dir_path(__DIR__).'templates/team-finder.php';
     wp_reset_postdata();
     return ob_get_clean();
+  }
+
+  /**
+   * Get current streamer team
+   *
+   * @return void
+   */
+  public static function get_current_streamer_team(){
+    if (is_user_logged_in()):
+      $teams = get_posts(array(
+        'post_type'   => 'teams',
+        'post_status' => 'any',
+        'author'      => get_current_user_id()
+      ));
+      if (!empty($teams)):
+        return $teams;
+      else:
+        return;
+      endif;
+    else: 
+      return;
+    endif;    
   }
 
 }

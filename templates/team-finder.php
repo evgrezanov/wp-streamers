@@ -68,7 +68,10 @@
                     <div class="col-auto">
                         <input type="hidden" id="user-id" name="user-id"
                             value="<?php echo is_user_logged_in() ? get_current_user_id() : ''?>">
-                        <input class="btn btn-primary" type="submit" value="<?=__('Add new team', 'wp-streamer')?>">
+                        <input class="btn btn-primary" id="add-new-team-finder" type="submit"
+                            value="<?=__('Add new team', 'wp-streamer')?>">
+                        <input class="btn btn-primary" id="clear-filter-team-finder" type="submit"
+                            value="<?=__('Clear filter', 'wp-streamer')?>">
                     </div>
                 </div>
             </form>
@@ -115,7 +118,7 @@
                 <td><?=$rank[0]->name?></td>
                 <td><?=$age_requirement?>+</td>
                 <td><?=$position_str?></td>
-                <td><?=get_the_date('d/m/Y', $team->post_ID)?></td>
+                <td><?=get_the_date('d/m/Y H:i', $team->ID)?></td>
                 <td><?php echo $team->post_status != 'publish' ?  '<span class="badge badge-secondary">draft</span>' :'<span class="badge badge-success">verified</span>';?>
                 </td>
                 <td>

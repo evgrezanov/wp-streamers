@@ -52,11 +52,11 @@ document.addEventListener("DOMContentLoaded", function () {
               response.data.message +
               "</div>";
             teamFinder.disply_response(message);
+            teamFinder.clear_inputs();
+            //teamFinder.add_new_row(args);
           }
-          //console.log(response);
           submitBtn.disabled = false;
           submitBtn.value = submitBtnText;
-          //console.log(responseBlock);
         } else if (request.status == 401) {
           message =
             '<div class="alert alert-danger" role="alert">' +
@@ -115,13 +115,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
       return arrayResult;
     },
+
     disply_response: function (message) {
       var responseBlock = document.querySelector("#teamFinderAddResponse");
       responseBlock.innerHTML = message;
     },
+
+    clear_inputs: function () {
+      (function ($) {
+        $("select").each(function () {
+          this.selectedIndex = 0;
+        });
+        var dt = $("team-finder").DataTable();
+        dt.search("");
+      })(window.jQuery);
+      document.getElementById("team-name").value = "";
+    },
+
+    /*add_new_row: function (data) {
+      // https://stackoverflow.com/questions/29563160/add-a-new-row-to-the-top-of-a-jquery-datatable
+      // https://stackoverflow.com/questions/4731622/insert-a-new-row-into-datatable
+      //var teamFinderTable = document.getElementById("#team-finder");
+      TeamNewRow = dt.NewRow();
+      (TeamNewRow[0] =
+        '<img class="team_finder_team_logo" style="max-width:50px;" src="http://valtzone.local/wp-content/plugins/wp-streamers/img/no_avatar.png">'),
+        (TeamNewRow[1] = data["team-name"]),
+        (TeamNewRow[2] = data["team-type"]),
+        (TeamNewRow[3] = data["team-region"]),
+        (TeamNewRow[4] = data["team-rank"]),
+        (TeamNewRow[5] = data["team-age"]),
+        (TeamNewRow[6] = data["team-agent"]),
+        (TeamNewRow[7] = ""),
+        (TeamNewRow[8] = '<span class="badge badge-secondary">draft</span>'),
+        (TeamNewRow[9] =
+          '<button type="button" class="btn btn-danger btn-sm">Send invite</button><a type="button" class="btn btn-info btn-sm" href="http://valtzone.local/teams/team2/">More info</a>'),
+        td.TeamNewRow.InsertAt(TeamNewRow, 0);
+    },*/
   };
 
-  console.log(teamFinder.get_params());
   TeamFinderFormAjax(
     "#team-finder-add-new",
     "streamers/v1/team/quick_add_new/" + config["user-id"],
@@ -136,22 +167,26 @@ document.addEventListener("DOMContentLoaded", function () {
       responsive: true,
       sDom: '<"top"i>r<"bottom"tflp><"clear">',
     });
+
     // Team type filter
     $("#team-type").on("change", function () {
       selectedTeamType = $("#team-type option:selected").html();
       //console.log($("#team-type option:selected").html());
       table.search($("#team-type option:selected").html()).draw();
     });
+
     // team-region filter
     $("#team-region").on("change", function () {
       selectedTeamRegion = $("#team-region option:selected").html();
       table.search($("#team-region option:selected").html()).draw();
     });
+
     // team-rank filter
     $("#team-rank").on("change", function () {
       selectedTeamRank = $("#team-rank option:selected").html();
       table.search($("#team-rank option:selected").html()).draw();
     });
+
     // team-age filter
     $("#team-age-requirement").on("change", function () {
       selectedTeamAgeRequirement = $(
@@ -159,12 +194,22 @@ document.addEventListener("DOMContentLoaded", function () {
       ).html();
       table.search($("#team-age-requirement option:selected").html()).draw();
     });
+
     // team-preferred-agent filter
     $("#team-preferred-agent").on("change", function () {
       selectedTeamPreferredAgent = $(
         "#team-preferred-agent option:selected"
       ).html();
       table.search($("#team-preferred-agent option:selected").html()).draw();
+    });
+
+    // clear filter button
+    $("#clear-filter-team-finder").click(function () {
+      table.search("").draw();
+      $("select").each(function () {
+        this.selectedIndex = 0;
+      });
+      $("#team-name").val("");
     });
   });
 })(window.jQuery);
