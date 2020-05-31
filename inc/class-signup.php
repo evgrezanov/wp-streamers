@@ -68,8 +68,37 @@ class WP_STREAMER_SIGNUP {
    **/
   public static function rest_user_endpoints($request) {
     register_rest_route('streamers/v1', 'streamer/signup', array(
-      'methods'   => WP_REST_Server::CREATABLE,
+      'methods'   => 'POST',
       'callback'  => [__CLASS__, 'rest_streamer_endpoint_register'],
+      'args' => [
+				'user_login' => [
+					'required' => true,
+        ],
+        'user_email' => [
+          'required' => true,
+          'type'     => 'string',
+        ],
+        'user_password' => [
+          'required' => true,
+          'type'     => 'string',
+        ],
+        'streamer_valorant_server' => [
+          'required' => true,
+          'type'     => 'string',
+        ],
+        'user_birthday_dd' => [
+          'required' => true,
+          'type'     => 'string',
+        ],
+        'user_birthday_mm' => [
+          'required' => true,
+          'type'     => 'string',
+        ],
+        'user_birthday_yy' => [
+          'required' => true,
+          'type'     => 'string',
+				],
+			], 
     ));
   }
 
@@ -155,6 +184,7 @@ class WP_STREAMER_SIGNUP {
       $all_errors = self::$errors->get_error_messages();
       $msg = '';
       foreach ($all_errors as $key => $value) {
+        cosole.log($value);
         $msg .= '<p>'.$value.'</p>';
       }
       $response = [
