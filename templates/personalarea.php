@@ -42,12 +42,12 @@
                     <div class="col-md-6 mb-3">
                         <label for="first_name">First name</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" placeholder=""
-                            value="<?=$user->first_name?>" required>
+                            value="<?=$user->first_name?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="last_name">Last name</label>
                         <input type="text" class="form-control" id="last_name" name="last_name" placeholder=""
-                            value="<?=$user->last_name?>" required>
+                            value="<?=$user->last_name?>">
                     </div>
                 </div>
 

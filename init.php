@@ -5,7 +5,7 @@
  * Plugin URI:  https://github.com/evgrezanov/wp-streamers
  * Author URI:  https://www.upwork.com/freelancers/~01ea58721977099d53
  * Author:      <a href="https://www.upwork.com/freelancers/~01ea58721977099d53" target="_blank">Evgeniy Rezanov</a>
- * Version:     1.6.0
+ * Version:     1.6.1
  * GitHub Plugin URI: evgrezanov/wp-streamers
  * GitHub Plugin URI: https://github.com/evgrezanov/wp-streamers
  * Text Domain: wp-streamers
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'WP_STREAMERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WP_STREAMERS_FILE', __FILE__ );
 define( 'WP_STREAMERS_URL', plugin_dir_url( __FILE__ ) );
-define( 'WP_STREAMERS_VERSION', '1.6.0' );
+define( 'WP_STREAMERS_VERSION', '1.6.1' );
 define( 'WP_STREAMERS_NO_IMG', 'img/no_avatar.png');
 
 class WP_STREAMERS {
@@ -28,6 +28,9 @@ class WP_STREAMERS {
             // load translate files
 	        load_plugin_textdomain( 'wp-streamers', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' ); 
         }, 999);
+
+        // assets
+        add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
         
         // require uppy avatar for streamer
         require_once('inc/class-uppy-avatar.php');
@@ -61,6 +64,52 @@ class WP_STREAMERS {
         register_deactivation_hook( __FILE__, function (){
 	        remove_role( 'streamers' );
         });
+    }
+
+    public static function assets(){
+      wp_enqueue_script('wp-api');
+      
+      wp_enqueue_script(
+        'popperjs',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
+        ['jquery'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrapjs',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
+        ['jquery', 'popperjs'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-bundle',
+        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.bundle.min.js'),
+        ['jquery', 'bootstrapjs', 'popperjs'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'bootstrap-select',
+        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
+        ['jquery', 'bootstrapjs', 'bootstrap-bundle', 'popperjs'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_style(
+        'bootstrap-select', 
+        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
+      );
+
+      wp_enqueue_style(
+        'bootstrap-css', 
+        WP_STREAMERS_URL . ('asset/bootstrap/bootstrap.min.css')
+      );
     }
 }
 

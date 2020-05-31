@@ -104,6 +104,7 @@
                 $age_requirement = get_post_meta($team->ID, 'age_requirement', true);
                 $position_required = get_post_meta($team->ID, 'position_required', true);
                 $team_logo = UPPY_AVATAR::get_team_logo($team->ID,'tumbnail');
+                
                 $position_str='';
                 if (is_array($position_required)):
                     foreach ($position_required as $key=>$value):
@@ -121,7 +122,7 @@
                 <td><?=$age_requirement?>+</td>
                 <td><?=$position_str?></td>
                 <td><?=get_the_date('d/m/Y H:i', $team->ID)?></td>
-                <td><?php echo $team->post_status != 'publish' ?  '<span class="badge badge-secondary">draft</span>' :'<span class="badge badge-success">verified</span>';?>
+                <td><?php echo $team->post_status != 'publish' ?  '<span class="badge badge-secondary">draft</span>' :'<span class="badge badge-secondary">draft</span>';?>
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger btn-sm"><?=__('Send invite', 'wp-streamer')?></button>

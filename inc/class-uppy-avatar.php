@@ -28,10 +28,11 @@ class UPPY_AVATAR {
             'uppy-styles', 
             WP_STREAMERS_URL . 'asset/uppy/uppy.min.css'
 		);
+		/*
 		wp_enqueue_style(
             'bootstrap-new', 
             WP_STREAMERS_URL . 'asset/bootstrap/bootstrap.min.css'
-        );
+        );*/
 	}
 
 	public static function rest_api_init(){

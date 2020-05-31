@@ -30,7 +30,7 @@ class WP_STREAMER_SIGNIN {
         wp_enqueue_script(
           'streamer-signin',
           WP_STREAMERS_URL.('asset/signin-script.js'),
-          ['jquery', 'bootstrap-js', 'popper-js'],
+          ['jquery', 'bootstrapjs', 'popperjs'],
           WP_STREAMERS_VERSION,
           true
         );

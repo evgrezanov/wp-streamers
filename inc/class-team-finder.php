@@ -52,43 +52,14 @@ class WP_TEAMS_FINDER {
   public static function assets(){
     global $post;
     if ( $post->post_name == self::$team_finder_slug ):
-      wp_enqueue_script('wp-api');
+      //wp_enqueue_script('wp-api');
       
       wp_enqueue_script(
         'datatables',
         WP_STREAMERS_URL.('asset/DataTables/datatables.min.js'),
-        ['jquery'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      /*wp_enqueue_script(
-        'bootstrap-js',
-        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
-        ['jquery'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_script(
-        'popper-js',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
         ['jquery', 'bootstrap-js'],
         WP_STREAMERS_VERSION,
         false
-      );*/
-
-      wp_enqueue_script(
-        'bootstrap-select',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
-        ['jquery', 'bootstrap-js', 'popper-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_style(
-        'bootstrap-select', 
-        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
       );
 
       $args = [
@@ -109,7 +80,7 @@ class WP_TEAMS_FINDER {
       wp_enqueue_script(
         'team-finder',
         WP_STREAMERS_URL.('asset/team-finder-script.js'),
-        ['jquery','bootstrap-select', 'bootstrap-js', 'popper-js'],
+        ['jquery','bootstrap-select', 'bootstrapjs', 'popperjs'],
         WP_STREAMERS_VERSION,
         true
       );
@@ -203,7 +174,7 @@ class WP_TEAMS_FINDER {
     if( empty( self::$errors->get_error_messages() ) ) :
       // вставляем запись в базу данных
       $post_id = wp_insert_post(  wp_slash( array(
-        'post_status'   => 'draft',
+        'post_status'   => 'publish',
         'post_title'    => $teamTitle,
         'post_type'     => 'teams',
         'post_author'   => $userID,
@@ -211,8 +182,9 @@ class WP_TEAMS_FINDER {
           'teams-type'      => $teamsTypeArray
         ), 
         'meta_input'    => [ 
-          'age_requirement' => $ageRequirement,
+          'age_requirement'   => $ageRequirement,
           'position_required' => $positionRequired,
+          'is_draft'          => true,
         ],
       ) ) );
 
@@ -269,6 +241,7 @@ class WP_TEAMS_FINDER {
    * @return void
    */
   public static function display_team_finder() {
+    global $post;
     $arg = array(
       'post_type'   => 'teams',
       'post_status' => 'any',
@@ -296,6 +269,7 @@ class WP_TEAMS_FINDER {
     $ages = WP_STREAMERS_TEAMS::$age_requirement_list;
     $agents = WP_STREAMERS_TEAMS::$streamer_preferred_agent;
     $current_team = self::get_current_streamer_team();
+    $is_draft = get_post_meta('is_draft', $post->ID, true);
     ob_start();
     require_once plugin_dir_path(__DIR__).'templates/team-finder.php';
     wp_reset_postdata();

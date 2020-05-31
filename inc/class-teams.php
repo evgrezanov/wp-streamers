@@ -53,46 +53,8 @@ class WP_STREAMERS_TEAMS {
    */  
   public static function assets(){
     global $post;
-    if ( is_singular('teams') && is_user_logged_in() && $post->post_author == get_current_user_id() ):
-      wp_enqueue_script('wp-api');
+    if (is_user_logged_in()):
       
-      wp_enqueue_script(
-        'popper-js',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
-        ['jquery'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_script(
-        'bootstrap-js',
-        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
-        ['jquery', 'popper-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_script(
-        'bootstrap-bundle',
-        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.bundle.min.js'),
-        ['jquery', 'bootstrap-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_script(
-        'bootstrap-select',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
-        ['jquery', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_style(
-        'bootstrap-select', 
-        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
-      );
-
       $position_required = get_post_meta($post->ID, 'position_required', true);
 
       $args = [
@@ -115,7 +77,7 @@ class WP_STREAMERS_TEAMS {
       wp_enqueue_script(
         'team-update',
         WP_STREAMERS_URL.('asset/team-script.js'),
-        ['jquery','bootstrap-select', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        ['jquery','bootstrap-select', 'bootstrapjs', 'bootstrap-bundle', 'popperjs'],
         WP_STREAMERS_VERSION,
         true
       );

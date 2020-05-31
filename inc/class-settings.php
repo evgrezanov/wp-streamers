@@ -49,45 +49,6 @@ class WP_STREAMER_SETTINGS {
   public static function assets(){
     global $post;
     if ( $post->post_name == self::$profile_page_slug && is_user_logged_in()):
-      wp_enqueue_script('wp-api');
-      
-      wp_enqueue_script(
-        'popper-js',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
-        ['jquery'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_script(
-        'bootstrap-js',
-        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
-        ['jquery', 'popper-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-      
-      wp_enqueue_script(
-        'bootstrap-bundle',
-        WP_STREAMERS_URL.('asset/bootstrap/bootstrap.bundle.min.js'),
-        ['jquery', 'bootstrap-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-      
-      wp_enqueue_script(
-        'bootstrap-select',
-        WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
-        ['jquery', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
-        WP_STREAMERS_VERSION,
-        false
-      );
-
-      wp_enqueue_style(
-        'bootstrap-select', 
-        WP_STREAMERS_URL . ('asset/bootstrap-select/css/bootstrap-select.min.css')
-      );
-
       $current_agents = get_user_meta(get_current_user_id(), "streamer-position-required", true);
 
       $args = [
@@ -109,7 +70,7 @@ class WP_STREAMER_SETTINGS {
       wp_enqueue_script(
         'streamer-update',
         WP_STREAMERS_URL.('asset/streamer-script.js'),
-        ['jquery','bootstrap-select', 'bootstrap-js', 'bootstrap-bundle', 'popper-js'],
+        ['jquery','bootstrap-select', 'bootstrapjs', 'bootstrap-bundle', 'popperjs'],
         WP_STREAMERS_VERSION,
         true
       );

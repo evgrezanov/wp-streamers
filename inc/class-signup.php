@@ -12,24 +12,6 @@ class WP_STREAMER_SIGNUP {
   }
 
   public static function assets() {
-    wp_enqueue_script('wp-api');
-    
-    wp_enqueue_script(
-      'bootstrap-js',
-      WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
-      ['jquery'],
-      WP_STREAMERS_VERSION,
-      false
-    );
-
-    wp_enqueue_script(
-      'popper-js',
-      WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
-      ['jquery', 'bootstrap-js'],
-      WP_STREAMERS_VERSION,
-      false
-    );
-
     $args = array(
       'site-url' => 'streamers/v1/streamer/signup',
     );
@@ -48,7 +30,7 @@ class WP_STREAMER_SIGNUP {
     wp_enqueue_script(
       'streamer-signup',
       WP_STREAMERS_URL.('asset/signup-script.js'),
-      ['jquery', 'bootstrap-js', 'popper-js'],
+      ['jquery', 'bootstrapjs', 'popperjs'],
       WP_STREAMERS_VERSION,
       true
     );
