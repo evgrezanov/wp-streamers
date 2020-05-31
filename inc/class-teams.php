@@ -139,7 +139,10 @@ class WP_STREAMERS_TEAMS {
 						return is_numeric( $param );
 					},
 				]
-			],
+      ],
+      'permission_callback' => function ( WP_REST_Request $request ) {
+        return current_user_can('read');
+      },
     ]);
   }
 
