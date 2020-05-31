@@ -6,6 +6,10 @@ class WP_TEAMS_FINDER {
 
   public static $team_finder_slug = 'team-finder';
   
+  public static $team_default_age = '15';
+
+  public static $team_default_agent = 'breach';
+  
   public static $age_requirement_list = array(
     '15'  =>  '15+',
     '16'  =>  '16+',
@@ -47,7 +51,7 @@ class WP_TEAMS_FINDER {
    */  
   public static function assets(){
     global $post;
-    //if ( is_singular('teams') && is_user_logged_in() && $post->post_author == get_current_user_id() ):
+    if ( $post->post_name == self::$team_finder_slug ):
       wp_enqueue_script('wp-api');
       
       wp_enqueue_script(
@@ -58,7 +62,7 @@ class WP_TEAMS_FINDER {
         false
       );
 
-      wp_enqueue_script(
+      /*wp_enqueue_script(
         'bootstrap-js',
         WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
         ['jquery'],
@@ -72,7 +76,7 @@ class WP_TEAMS_FINDER {
         ['jquery', 'bootstrap-js'],
         WP_STREAMERS_VERSION,
         false
-      );
+      );*/
 
       wp_enqueue_script(
         'bootstrap-select',
@@ -88,7 +92,7 @@ class WP_TEAMS_FINDER {
       );
 
       $args = [
-        'user-id'       =>  get_current_user_id(),
+        'user-id'  =>  get_current_user_id(),
       ];
 
       wp_register_script(
@@ -110,7 +114,7 @@ class WP_TEAMS_FINDER {
         true
       );
       
-    //endif;
+    endif;
   }
   
   /**
@@ -120,7 +124,7 @@ class WP_TEAMS_FINDER {
    */
   public static function rest_api_init() {
     register_rest_route('streamers/v1', '/team/quick_add_new/(?P<id>[\d]+)', [
-      'methods'  => 'POST',
+      'methods'  => WP_REST_Server::CREATABLE,
       'callback' => [__CLASS__, 'quick_add_new'],
       'args' => [
 				'id' => [
@@ -129,7 +133,10 @@ class WP_TEAMS_FINDER {
 						return is_numeric( $param );
 					},
 				]
-			],
+      ],
+      'permission_callback' => function ( WP_REST_Request $request ) {
+        return current_user_can('read');
+      }
     ]);
   }
 
@@ -177,18 +184,19 @@ class WP_TEAMS_FINDER {
 
     // Age Requirement
     if(isset($_REQUEST['team-age-requirement']) && !empty($_REQUEST['team-age-requirement'])){
-      $ageRequirement = $_REQUEST['team-age-requirement'];
+      $ageRequirement = (int)$_REQUEST['team-age-requirement'];
     } else {  
-      self::$errors->add('5', 'Input valid team age requirement region!');
+      $ageRequirement = self::$team_default_age;
     }
 
     //Positions required
+    $pos_array=array();
     if(isset($_REQUEST['team-agent']) && !empty($_REQUEST['team-agent'])):
-      $pos_array=array();
       $pos_array[] = $_REQUEST['team-agent'];
       $positionRequired = $pos_array;
     else:  
-      self::$errors->add('7', 'Input valid positions requered field!');
+      $pos_array[] = self::$team_default_agent;
+      $positionRequired = $pos_array;
     endif;
   
     // check errors and update team
@@ -219,8 +227,26 @@ class WP_TEAMS_FINDER {
     endif;
 
     if ( empty( self::$errors->get_error_messages() ) ):
+      $cur_team = get_post($post_id);
+      $cur_type = get_term((int)$_REQUEST['team-type'], 'teams-type');
+      $cur_region = get_term((int)$_REQUEST['team-region'], 'valorant-server');
+      $cur_rank = get_term((int)$_REQUEST['team-rank'], 'rank-requirement');
+      $logo = UPPY_AVATAR::get_team_logo($post_id,'tumbnail');
+      $team_logo = '<img class="team_finder_team_logo" style="max-width:50px;" src="'.$logo.'">';
       $response = [
-        'message' => 'Team insert successfully!',
+        'message'     => 'Team <a href="'.get_permalink($cur_team).'"><strong>'.$cur_team->post_title.'</strong></a> add successfully! <a href="'.get_permalink($cur_team).'">Edit</a> your team, for have verified status.',
+        'team_name'   => $cur_team->post_title,
+        'team_id'     => $post_id,
+        'team_logo'   => $team_logo,
+        'team_type'   => $cur_type->name,
+        'team_region' => $cur_region->name,
+        'team_rank'   => $cur_rank->name,
+        'team_age'    => $ageRequirement.'+',
+        'team_agents' => '<span class="badge badge-dark">'.$_REQUEST['team-agent'].'</span>',
+        'team_link'   => get_permalink($cur_team),
+        'team_date'   => get_the_date('d/m/Y H:i', $post_id),
+        'team_status' => '<span class="badge badge-secondary">draft</span>',
+        'team_button' => '<button type="button" class="btn btn-danger btn-sm">Send invite</button><a type="button" class="btn btn-info btn-sm" href="'.get_permalink($cur_team).'">More info</a>',
       ];
       wp_send_json_success($response);
     else:
@@ -230,49 +256,11 @@ class WP_TEAMS_FINDER {
           $msg .= $value.' / ';
         }
       $response = [
-        'message'    => 'Team insert fail! => ' . $msg,
+        'message'    => 'Team insert fail! => ',
+        'details'    => $msg,
       ];
       wp_send_json_error($response, 500);
     endif;
-  }
-
-  /**
-   * Save team metadata
-   *
-   * @return void
-   */
-  public static function save_team_meta( $post_id ) {
-        
-    if ( wp_is_post_revision( $post_id ) ){
-        return;
-    }
-
-    if ( ! current_user_can( 'edit_post', $post_id ) ):
-        return $post_id;
-    endif;
-
-    if ( ! isset( $_POST['age_requirement'] ) || ! wp_verify_nonce( $_POST['teams_fields'], basename(__FILE__) ) ):
-    //if ( ! isset( $_POST['age_requirement'] ) || ! isset( $_POST['amount_players_needed'] ) || ! isset( $_POST['positions_equired'] ) || ! wp_verify_nonce( $_POST['teams_fields'], basename(__FILE__) ) ):
-        return $post_id;
-    endif;
-    
-    $events_meta['age_requirement'] = esc_textarea( $_POST['age_requirement'] );
-    //$events_meta['amount_players_needed'] = esc_textarea( $_POST['amount_players_needed'] );
-    //$events_meta['positions_equired'] = esc_textarea( $_POST['positions_equired'] );
-
-    foreach ( $events_meta as $key => $value ) :
-
-      if ( get_post_meta( $post_id, $key, false ) ) {
-        update_post_meta( $post_id, $key, $value );
-      } else {
-        add_post_meta( $post_id, $key, $value);
-      }
-
-      if ( ! $value ) {
-        delete_post_meta( $post_id, $key );
-      }
-
-    endforeach;
   }
 
   /**

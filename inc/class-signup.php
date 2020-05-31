@@ -7,11 +7,51 @@ class WP_STREAMER_SIGNUP {
 
 	public static function init(){
       add_shortcode('streamer_signup', [__CLASS__, 'signup']);
-      add_action('streamer_registration', [__CLASS__, 'registration']);
-      add_action('display_notice', [__CLASS__, 'notice']);
-      add_action('init', [__CLASS__, 'save_reg_form']);
-      //add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
-      //add_action('rest_api_init', [__CLASS__, 'wp_rest_user_endpoints']);
+      add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
+      add_action('rest_api_init', [__CLASS__, 'rest_user_endpoints']);
+  }
+
+  public static function assets() {
+    wp_enqueue_script('wp-api');
+    
+    wp_enqueue_script(
+      'bootstrap-js',
+      WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
+      ['jquery'],
+      WP_STREAMERS_VERSION,
+      false
+    );
+
+    wp_enqueue_script(
+      'popper-js',
+      WP_STREAMERS_URL.('asset/bootstrap-select/js/popper.min.js'),
+      ['jquery', 'bootstrap-js'],
+      WP_STREAMERS_VERSION,
+      false
+    );
+
+    $args = array(
+      'site-url' => 'streamers/v1/streamer/signup',
+    );
+
+    wp_register_script(
+      'streamer-signup',
+      WP_STREAMERS_URL.('asset/signup-script.js')
+    );
+
+    wp_localize_script(
+      'streamer-signup',
+      'endpointStreamerSignUp',
+      $args
+    );
+
+    wp_enqueue_script(
+      'streamer-signup',
+      WP_STREAMERS_URL.('asset/signup-script.js'),
+      ['jquery', 'bootstrap-js', 'popper-js'],
+      WP_STREAMERS_VERSION,
+      true
+    );
   }
 
   /**
@@ -20,33 +60,34 @@ class WP_STREAMER_SIGNUP {
    * @param  WP_REST_Request $request Full details about the request.
    * @return array $args.
    **/
-  public static function wp_rest_streamer_endpoints($request) {
-    register_rest_route('streamers/v1', 'streamer/register', array(
-      'methods' => 'POST',
-      'callback' => 'rest_streamer_endpoint_register',
+  public static function rest_user_endpoints($request) {
+    register_rest_route('streamers/v1', 'streamer/signup', array(
+      'methods'   => WP_REST_Server::CREATABLE,
+      'callback'  => [__CLASS__, 'rest_streamer_endpoint_register'],
     ));
   }
 
-  public static function rest_streamer_endpoint_register($request = null){
-    $response = array();
-    $data = $request->get_json_params();
+  public static function rest_streamer_endpoint_register(){
+    self::$errors = new \WP_Error();
+    
     // exist username/login
-    if ( username_exists( $data['user_login'] )) {
+    if ( username_exists( $_REQUEST['user_login'] )) {
       self::$errors->add( 'username_exists', __('User name exist already!', 'wp-streamers') );
-    } elseif (!validate_username( $data['user_login'] )) {
+    } elseif (!validate_username( $_REQUEST['user_login'] )) {
       self::$errors->add( 'username_invalid', ( __('В имени пользователя использованы недопустимые символы!', 'wp-streamers')) );
     }
+
     // email
-    if ( empty( $data['user_email'] ) ) {
+    if ( empty( $_REQUEST['user_email'] ) ) {
       self::$errors->add( 'email', __('Email field text is not email', 'wp-streamers') );
-    } elseif ( !is_email( $data['user_email'] ) ) {
+    } elseif ( !is_email( $_REQUEST['user_email'] ) ) {
       self::$errors->add( 'email_invalid', __('You entered an invalid email address!', 'wp-streamers') );
-    } elseif ( email_exists( $data['user_email'] ) ) {
+    } elseif ( email_exists( $_REQUEST['user_email'] ) ) {
       self::$errors->add( 'email_exist', __('This email address is already in use!', 'wp-streamers') );
     }
 
     // password validation
-    $password = $data['user_password'];
+    $password = $_REQUEST['user_password'];
 
     // Validate password strength
     $uppercase = preg_match('@[A-Z]@', $password);
@@ -58,39 +99,40 @@ class WP_STREAMER_SIGNUP {
     }
 
     // user birthday
-    if ( empty($data['user_birthday_dd'])  || empty($data['user_birthday_mm']) || empty($data['user_birthday_yy'])) {
+    if ( empty($_REQUEST['user_birthday_dd'])  || empty($_REQUEST['user_birthday_mm']) || empty($_REQUEST['user_birthday_yy'])) {
         self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
     } 
-    if ( (date('Y') - $data['user_birthday_yy']) < 15){
+    if ( (date('Y') - $_REQUEST['user_birthday_yy']) < 15){
         self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );  
     }
     
     // user region
-    if ( empty ($data['streamer_valorant_server'])) {
+    if ( empty ($_REQUEST['streamer_valorant_server'])) {
       self::$errors->add( 'invalid_valorant_server', __('User Valorant server invalid', 'wp-streamers') );
     }
     
     if( empty( self::$errors->get_error_messages() ) ):
       $userdata = array(
-        'user_pass'       => $data['user_password'], 
-        'user_login'      => sanitize_text_field($data['user_login']), 
-        'user_email'      => sanitize_text_field($data['user_email']),
+        'user_pass'       => $_REQUEST['user_password'], 
+        'user_login'      => sanitize_text_field($_REQUEST['user_login']), 
+        'user_email'      => sanitize_text_field($_REQUEST['user_email']),
         'role'            => 'streamers', 
         'user_registered' => date('Y-m-d H:i:s')
       );
       
       $new_user_id = wp_insert_user( $userdata );
-      $user_birthday = $data['user_birthday_dd'] . '-' . $data['user_birthday_mm'] . '-' . $data['user_birthday_yy'];
-      add_user_meta( $new_user_id, 'valorant_server', $data['streamer_valorant_server'] );
+      $user_birthday = $_REQUEST['user_birthday_dd'] . '-' . $_REQUEST['user_birthday_mm'] . '-' . $_REQUEST['user_birthday_yy'];
+      add_user_meta( $new_user_id, 'valorant_server', $_REQUEST['streamer_valorant_server'] );
       add_user_meta( $new_user_id, 'user_birthday_dd', $user_birthday);
 
       // TODO why no have notification?
       wp_new_user_notification( $new_user_id, null, 'both');
       
       $response = [
-        'message' => 'User created successfully!',
+        'message'   => 'User created successfully!',
+        'redirect'  => home_url().'/me',
       ];
-      wp_send_json_success($response);
+      
 
       //Auth
       $user = get_user_by('id', $new_user_id );
@@ -99,12 +141,19 @@ class WP_STREAMER_SIGNUP {
       wp_set_current_user($user->ID);
       wp_set_auth_cookie($user->ID, true, false);
       update_user_caches($user);
-      wp_safe_redirect(home_url().'/me');
+      
+      wp_send_json_success($response);
       
     else:
-
+      
+      $all_errors = self::$errors->get_error_messages();
+      $msg = '';
+      foreach ($all_errors as $key => $value) {
+        $msg .= '<p>'.$value.'</p>';
+      }
       $response = [
-        'message'    => 'User create fail! => ' . self::$errors->get_error_messages(),
+        'message'     => 'User create fail!',
+        'details'     => $msg,
       ];
       wp_send_json_error($response, 500);
       
@@ -128,154 +177,6 @@ class WP_STREAMER_SIGNUP {
     endif;
     return ob_get_clean();
   }
-
-  public static function save_reg_form(){
-    if( empty($_POST) || !isset($_POST['send_user_registeration'])){    
-      return;
-    } else {    
-      self::$errors = new \WP_Error();
-      do_action('streamer_registration', $_POST);
-    }
-  }
-
-  public static function registration($data){
-    // exist username/login
-    if ( username_exists( $data['user_login'] )) {
-      self::$errors->add( 'username_exists', __('User name exist already!', 'wp-streamers') );
-    } elseif (!validate_username( $data['user_login'] )) {
-      self::$errors->add( 'username_invalid', ( __('В имени пользователя использованы недопустимые символы!', 'wp-streamers')) );
-    }
-    // email
-    if ( empty( $data['user_email'] ) ) {
-      self::$errors->add( 'email', __('Email field text is not email', 'wp-streamers') );
-    } elseif ( !is_email( $data['user_email'] ) ) {
-      self::$errors->add( 'email_invalid', __('You entered an invalid email address!', 'wp-streamers') );
-    } elseif ( email_exists( $data['user_email'] ) ) {
-      self::$errors->add( 'email_exist', __('This email address is already in use!', 'wp-streamers') );
-    }
-
-    // password validation
-    $password = $data['user_password'];
-
-    // Validate password strength
-    $uppercase = preg_match('@[A-Z]@', $password);
-    $lowercase = preg_match('@[a-z]@', $password);
-    $number    = preg_match('@[0-9]@', $password);
-
-    if(!$uppercase || !$lowercase || !$number || strlen($password) < 6) {
-      self::$errors->add( 'weak_password', __('Password should be at least 6 characters in length and should include at least one upper case letter, one number.', 'wp-streamer'));
-    }
-
-    // user birthday
-    if ( empty($data['user_birthday_dd'])  || empty($data['user_birthday_mm']) || empty($data['user_birthday_yy'])) {
-        self::$errors->add( 'user_birthday', __('Input you birthday', 'wp-streamers') );
-    } 
-    if ( (date('Y') - $data['user_birthday_yy']) < 15){
-        self::$errors->add( 'cant_register', __('You must be at least 15 to be a member of valtzone ', 'wp-streamers') );  
-    }
-    
-    // user region
-    if ( empty ($data['streamer_valorant_server'])) {
-      self::$errors->add( 'invalid_valorant_server', __('User Valorant server invalid', 'wp-streamers') );
-    }
-    
-    if( empty( self::$errors->get_error_messages() ) ) {
-      $userdata = array(
-        'user_pass'       => $data['user_password'], 
-        'user_login'      => sanitize_text_field($data['user_login']), 
-        'user_email'      => sanitize_text_field($data['user_email']),
-        'role'            => 'streamers', 
-        'user_registered' => date('Y-m-d H:i:s')
-      );
-      
-      $new_user_id = wp_insert_user( $userdata );
-      $user_birthday = $data['user_birthday_dd'] . '-' . $data['user_birthday_mm'] . '-' . $data['user_birthday_yy'];
-      add_user_meta( $new_user_id, 'valorant_server', $data['streamer_valorant_server'] );
-      add_user_meta( $new_user_id, 'user_birthday_dd', $user_birthday);
-
-      // TODO why no have notification?
-      wp_new_user_notification( $new_user_id, null, 'both');
-      
-      //Auth
-      $user = get_user_by('id', $new_user_id );
-      clean_user_cache($user->ID);
-      wp_clear_auth_cookie();
-      wp_set_current_user($user->ID);
-      wp_set_auth_cookie($user->ID, true, false);
-      update_user_caches($user);
-      wp_safe_redirect(home_url().'/me');
-    }
-
-  }
-  
-  public static function notice($context = ''){
-    if(empty($_POST)){
-      return;
-    }
-
-    if( ! method_exists(self::$errors,'get_error_messages')){
-      return;
-    }
-
-    $errors = self::$errors->get_error_messages();
-
-    if( empty( $errors ) ) {
-      printf(
-        '<div class="alert alert-success" role="alert">%s</div>',
-        $text = 'Sucsess registration'
-      );
-
-    } else {
-      printf(
-        '<div class="alert alert-danger" role="alert">%s</div>',
-        $text = self::$errors->get_error_message()
-      );
-    }
-
-
-  }
-
-  public static function assets(){
-    
-    wp_enqueue_script(
-      'bootstrap-js',
-      WP_STREAMERS_URL.('asset/bootstrap/bootstrap.min.js'),
-      ['jquery'],
-      WP_STREAMERS_VERSION,
-      false
-    );
-    
-    wp_enqueue_style(
-      'bootstrap-css', 
-      WP_STREAMERS_URL . 'asset/bootstrap/bootstrap.min.css'
-    );
-
-
-    /*wp_enqueue_script( 
-      'signup-script', 
-      WP_STREAMERS_URL.'asset/signup-script.js', 
-      array('jquery', 'bootstrap-js', 'parsley-js'), 
-      WP_STREAMERS_VERSION,
-      true
-    );*/
-    
-  }
-
-/**
- * Register a new user
- *
- * @param  WP_REST_Request $request Full details about the request.
- * @return array $args.
- **/
-public static function wp_rest_user_endpoints($request) {
-  /**
-   * Handle Register User request.
-   */
-  register_rest_route('wp/v2', 'users/register', array(
-    'methods' => 'POST',
-    'callback' => 'wc_rest_user_endpoint_handler',
-  ));
-}
 
 }
 WP_STREAMER_SIGNUP::init();

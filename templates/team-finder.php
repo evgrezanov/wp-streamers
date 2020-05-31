@@ -5,7 +5,7 @@
         <div id="teamFinderAddResponse">
         </div>
         <div>
-            <form id="team-finder-add-new" type="post">
+            <form id="team-finder-add-new" type="POST">
                 <div class="form-row align-items-center">
                     <div class="col-auto">
                         <h8>Team type</h8>
@@ -70,7 +70,7 @@
                             value="<?php echo is_user_logged_in() ? get_current_user_id() : ''?>">
                         <input class="btn btn-primary" id="add-new-team-finder" type="submit"
                             value="<?=__('Add new team', 'wp-streamer')?>">
-                        <input class="btn btn-primary" id="clear-filter-team-finder" type="submit"
+                        <input class=" btn btn-primary" id="clear-filter-team-finder" type="submit"
                             value="<?=__('Clear filter', 'wp-streamer')?>">
                     </div>
                 </div>
@@ -82,6 +82,7 @@
     <table id="team-finder" class="display" style="width:100%">
         <thead>
             <tr>
+                <th></th>
                 <th></th>
                 <th><?=__('Team name', 'wp-streamer')?></th>
                 <th><?=__('Type', 'wp-streamer')?></th>
@@ -111,6 +112,7 @@
                 endif;
 	        ?>
             <tr>
+                <th><?=$team->ID?></th>
                 <td><img class="team_finder_team_logo" style="max-width:50px;" src="<?php echo $team_logo; ?>"></td>
                 <td><?=$team->post_title?></td>
                 <td><?=$type[0]->name?></td>
@@ -134,6 +136,7 @@
         </tbody>
         <tfoot>
             <tr>
+                <th></th>
                 <th></th>
                 <th><?=__('Team name', 'wp-streamer')?></th>
                 <th><?=__('Type', 'wp-streamer')?></th>
