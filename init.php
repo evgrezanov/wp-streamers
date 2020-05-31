@@ -5,7 +5,7 @@
  * Plugin URI:  https://github.com/evgrezanov/wp-streamers
  * Author URI:  https://www.upwork.com/freelancers/~01ea58721977099d53
  * Author:      <a href="https://www.upwork.com/freelancers/~01ea58721977099d53" target="_blank">Evgeniy Rezanov</a>
- * Version:     1.6.2
+ * Version:     1.6.3
  * GitHub Plugin URI: evgrezanov/wp-streamers
  * GitHub Plugin URI: https://github.com/evgrezanov/wp-streamers
  * Text Domain: wp-streamers
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'WP_STREAMERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WP_STREAMERS_FILE', __FILE__ );
 define( 'WP_STREAMERS_URL', plugin_dir_url( __FILE__ ) );
-define( 'WP_STREAMERS_VERSION', '1.6.2' );
+define( 'WP_STREAMERS_VERSION', '1.6.3' );
 define( 'WP_STREAMERS_NO_IMG', 'img/no_avatar.png');
 
 class WP_STREAMERS {
@@ -97,6 +97,14 @@ class WP_STREAMERS {
         'bootstrap-select',
         WP_STREAMERS_URL.('asset/bootstrap-select/js/bootstrap-select.min.js'),
         ['jquery', 'bootstrapjs', 'bootstrap-bundle', 'popperjs'],
+        WP_STREAMERS_VERSION,
+        false
+      );
+
+      wp_enqueue_script(
+        'micromodal',
+        WP_STREAMERS_URL.('asset/micromodal/micromodal.min.js'),
+        [],
         WP_STREAMERS_VERSION,
         false
       );

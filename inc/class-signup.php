@@ -7,8 +7,11 @@ class WP_STREAMER_SIGNUP {
 
 	public static function init(){
       add_shortcode('streamer_signup', [__CLASS__, 'signup']);
+      add_shortcode('signup_modal', [__CLASS__, 'signup_modal']);
       add_action('wp_enqueue_scripts', [__CLASS__, 'assets']);
       add_action('rest_api_init', [__CLASS__, 'rest_user_endpoints']);
+      add_action( 'wp_footer', [__CLASS__, 'signup_popup'], 30 );
+
   }
 
   public static function assets() {
@@ -34,8 +37,29 @@ class WP_STREAMER_SIGNUP {
       WP_STREAMERS_VERSION,
       true
     );
+
+    wp_enqueue_script(
+      'modal-signup',
+      WP_STREAMERS_URL.('asset/signup-modal-script.js'),
+      [],
+      WP_STREAMERS_VERSION,
+      true
+    );
   }
 
+  public static function signup_popup(){
+    require_once plugin_dir_path(__DIR__).'templates/signup-signin-modal.php';
+  }
+  
+  public static function signup_modal(){
+    ob_start();
+    ?>
+<a data-micromodal-trigger="modal-1" href='javascript:void(0);'>Register</a>
+<a data-micromodal-trigger="modal-2" href='javascript:void(0);'>Login</a>
+
+<?php
+    return ob_get_clean();
+  }
   /**
    * Register a new streamer
    *
