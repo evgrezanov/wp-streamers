@@ -120,34 +120,36 @@ var teamFinder = {
     responseBlock.innerHTML = message;
   },
   add_team_row: function (data) {
-    (function ($) {
-      var mytable = $("#team-finder").DataTable();
-      mytable.search("").draw();
-      mytable.row
-        .add([
-          data.team_id,
-          '<img class="team_finder_team_logo" style="max-width:50px;" src="http://valtzone.local/wp-content/plugins/wp-streamers/img/no_avatar.png">',
-          data.team_name,
-          data.team_type,
-          data.team_region,
-          data.team_rank,
-          data.team_age,
-          data.team_agents,
-          data.team_date,
-          data.team_status,
-          data.team_button,
-        ])
-        .draw();
-    })(window.jQuery);
+    //(function ($) {
+    jQuery.noConflict();
+    var mytable = jQuery("#team-finder").DataTable();
+    mytable.search("").draw();
+    mytable.row
+      .add([
+        data.team_id,
+        '<img class="team_finder_team_logo" style="max-width:50px;" src="http://valtzone.local/wp-content/plugins/wp-streamers/img/no_avatar.png">',
+        data.team_name,
+        data.team_type,
+        data.team_region,
+        data.team_rank,
+        data.team_age,
+        data.team_agents,
+        data.team_date,
+        data.team_status,
+        data.team_button,
+      ])
+      .draw();
+    //})(window.jQuery);
   },
   clear_inputs: function () {
-    (function ($) {
-      $("select").each(function () {
-        this.selectedIndex = 0;
-      });
-      var dt = $("team-finder").DataTable();
-      dt.search("");
-    })(window.jQuery);
+    jQuery.noConflict();
+    //(function ($) {
+    jQuery("select").each(function () {
+      this.selectedIndex = 0;
+    });
+    var dt = jQuery("team-finder").DataTable();
+    dt.search("");
+    //})(window.jQuery);
     document.getElementById("team-name").value = "";
   },
 };
@@ -159,64 +161,64 @@ document.addEventListener("DOMContentLoaded", function () {
     teamFinder.get_params()
   );
 });
-
-(function ($) {
-  // DataTable
-  $(document).ready(function ($) {
-    var table = $("#team-finder").DataTable({
-      responsive: true,
-      sDom: '<"top"i>r<"bottom"tflp><"clear">',
-      order: [[0, "desc"]],
-      aoColumnDefs: [
-        {
-          targets: [0],
-          visible: false,
-          searchable: false,
-        },
-      ],
-    });
-
-    // Team type filter
-    $("#team-type").on("change", function () {
-      selectedTeamType = $("#team-type option:selected").html();
-      table.search($("#team-type option:selected").html()).draw();
-    });
-
-    // team-region filter
-    $("#team-region").on("change", function () {
-      selectedTeamRegion = $("#team-region option:selected").html();
-      table.search($("#team-region option:selected").html()).draw();
-    });
-
-    // team-rank filter
-    $("#team-rank").on("change", function () {
-      selectedTeamRank = $("#team-rank option:selected").html();
-      table.search($("#team-rank option:selected").html()).draw();
-    });
-
-    // team-age filter
-    $("#team-age-requirement").on("change", function () {
-      selectedTeamAgeRequirement = $(
-        "#team-age-requirement option:selected"
-      ).html();
-      table.search($("#team-age-requirement option:selected").html()).draw();
-    });
-
-    // team-preferred-agent filter
-    $("#team-preferred-agent").on("change", function () {
-      selectedTeamPreferredAgent = $(
-        "#team-preferred-agent option:selected"
-      ).html();
-      table.search($("#team-preferred-agent option:selected").html()).draw();
-    });
-
-    // clear filter button
-    $("#clear-filter-team-finder").click(function () {
-      table.search("").draw();
-      $("select").each(function () {
-        this.selectedIndex = 0;
-      });
-      $("#team-name").val("");
-    });
+jQuery.noConflict();
+//(function ($) {
+// DataTable
+jQuery(document).ready(function ($) {
+  var table = jQuery("#team-finder").DataTable({
+    responsive: true,
+    sDom: '<"top"i>r<"bottom"tflp><"clear">',
+    order: [[0, "desc"]],
+    aoColumnDefs: [
+      {
+        targets: [0],
+        visible: false,
+        searchable: false,
+      },
+    ],
   });
-})(window.jQuery);
+
+  // Team type filter
+  jQuery("#team-type").on("change", function () {
+    selectedTeamType = jQuery("#team-type option:selected").html();
+    table.search(jQuery("#team-type option:selected").html()).draw();
+  });
+
+  // team-region filter
+  jQuery("#team-region").on("change", function () {
+    selectedTeamRegion = jQuery("#team-region option:selected").html();
+    table.search(jQuery("#team-region option:selected").html()).draw();
+  });
+
+  // team-rank filter
+  jQuery("#team-rank").on("change", function () {
+    selectedTeamRank = jQuery("#team-rank option:selected").html();
+    table.search(jQuery("#team-rank option:selected").html()).draw();
+  });
+
+  // team-age filter
+  jQuery("#team-age-requirement").on("change", function () {
+    selectedTeamAgeRequirement = jQuery(
+      "#team-age-requirement option:selected"
+    ).html();
+    table.search(jQuery("#team-age-requirement option:selected").html()).draw();
+  });
+
+  // team-preferred-agent filter
+  jQuery("#team-preferred-agent").on("change", function () {
+    selectedTeamPreferredAgent = jQuery(
+      "#team-preferred-agent option:selected"
+    ).html();
+    table.search(jQuery("#team-preferred-agent option:selected").html()).draw();
+  });
+
+  // clear filter button
+  jQuery("#clear-filter-team-finder").click(function () {
+    table.search("").draw();
+    jQuery("select").each(function () {
+      this.selectedIndex = 0;
+    });
+    jQuery("#team-name").val("");
+  });
+});
+//})(window.jQuery);

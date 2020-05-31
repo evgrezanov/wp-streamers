@@ -52,12 +52,11 @@ class WP_TEAMS_FINDER {
   public static function assets(){
     global $post;
     if ( $post->post_name == self::$team_finder_slug ):
-      //wp_enqueue_script('wp-api');
       
       wp_enqueue_script(
         'datatables',
         WP_STREAMERS_URL.('asset/DataTables/datatables.min.js'),
-        ['jquery', 'bootstrap-js'],
+        ['jquery', 'bootstrapjs'],
         WP_STREAMERS_VERSION,
         false
       );
@@ -80,7 +79,7 @@ class WP_TEAMS_FINDER {
       wp_enqueue_script(
         'team-finder',
         WP_STREAMERS_URL.('asset/team-finder-script.js'),
-        ['jquery','bootstrap-select', 'bootstrapjs', 'popperjs'],
+        ['jquery','bootstrapjs', 'popperjs', 'datatables'],
         WP_STREAMERS_VERSION,
         true
       );
