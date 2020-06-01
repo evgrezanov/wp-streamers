@@ -204,12 +204,15 @@ jQuery(document).ready(function ($) {
     table.search(jQuery("#team-age-requirement option:selected").html()).draw();
   });
 
-  // team-preferred-agent filter
-  jQuery("#team-preferred-agent").on("change", function () {
-    selectedTeamPreferredAgent = jQuery(
-      "#team-preferred-agent option:selected"
-    ).html();
-    table.search(jQuery("#team-preferred-agent option:selected").html()).draw();
+  // team-agent filter
+  jQuery("#team-agent").on("change", function () {
+    selectedTeamPreferredAgent = jQuery("#team-agent option:selected").html();
+    /*selectedTeamPreferredAgent =
+      '<span class="badge badge-dark">' +
+      selectedTeamPreferredAgent +
+      "</span>";*/
+    table.search(jQuery("#team-agent option:selected").html()).draw();
+    //table.search(selectedTeamPreferredAgent).draw();
   });
 
   // clear filter button
