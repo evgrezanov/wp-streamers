@@ -54,9 +54,22 @@ class WP_STREAMER_SIGNUP {
   public static function signup_modal(){
     ob_start();
     ?>
-<a data-micromodal-trigger="modal-1" href='javascript:void(0);'>Register</a>
-<a data-micromodal-trigger="modal-2" href='javascript:void(0);'>Login</a>
-
+<div class="elementor-button-wrapper">
+    <a data-micromodal-trigger="modal-1" href='javascript:void(0);'
+        class="elementor-button-link elementor-button elementor-size-sm" role="button">
+        <span class="elementor-button-content-wrapper">
+            <span class="elementor-button-text">Create Account</span>
+        </span>
+    </a>
+</div>
+<div class="elementor-button-wrapper">
+    <a data-micromodal-trigger="modal-2" href='javascript:void(0);'
+        class="elementor-button-link elementor-button elementor-size-sm" role="button">
+        <span class="elementor-button-content-wrapper">
+            <span class="elementor-button-text">Login</span>
+        </span>
+    </a>
+</div>
 <?php
     return ob_get_clean();
   }

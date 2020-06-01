@@ -40,6 +40,16 @@ class WP_STREAMER_SIGNIN {
         register_rest_route('streamers/v1', 'streamer/signin', array(
           'methods'   => WP_REST_Server::CREATABLE,
           'callback'  => [__CLASS__, 'rest_streamer_endpoint_login'],
+          'args' => [
+            'user_login' => [
+                'required' => true,
+                'type'     => 'string',
+            ],
+            'user_password' => [
+                'required' => true,
+                'type'     => 'string',
+            ],
+          ]
         ));
     }
     
