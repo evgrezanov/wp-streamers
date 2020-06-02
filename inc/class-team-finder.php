@@ -60,7 +60,20 @@ class WP_TEAMS_FINDER {
         WP_STREAMERS_VERSION,
         false
       );
+      /*
+      wp_enqueue_script(
+        'datatables-bootstrap',
+        WP_STREAMERS_URL.('asset/DataTables/bootstrap.min.js'),
+        ['jquery', 'bootstrapjs'],
+        WP_STREAMERS_VERSION,
+        false
+      );
 
+      wp_enqueue_style(
+        'datatables-bootstrap-css', 
+        WP_STREAMERS_URL . ('asset/DataTables/bootstrap.min.css')
+      );
+      */
       $args = [
         'user-id'  =>  get_current_user_id(),
       ];

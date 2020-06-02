@@ -207,12 +207,7 @@ jQuery(document).ready(function ($) {
   // team-agent filter
   jQuery("#team-agent").on("change", function () {
     selectedTeamPreferredAgent = jQuery("#team-agent option:selected").html();
-    /*selectedTeamPreferredAgent =
-      '<span class="badge badge-dark">' +
-      selectedTeamPreferredAgent +
-      "</span>";*/
     table.search(jQuery("#team-agent option:selected").html()).draw();
-    //table.search(selectedTeamPreferredAgent).draw();
   });
 
   // clear filter button

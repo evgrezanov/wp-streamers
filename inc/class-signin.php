@@ -38,22 +38,20 @@ class WP_STREAMER_SIGNIN {
 
     public static function rest_user_endpoints() {
         register_rest_route('streamers/v1', 'streamer/signin', array(
-          'methods'   => WP_REST_Server::CREATABLE,
+          'methods'   => 'POST',
           'callback'  => [__CLASS__, 'rest_streamer_endpoint_login'],
-          'args' => [
-            'user_login' => [
-                'required' => true,
-                'type'     => 'string',
-            ],
-            'user_password' => [
-                'required' => true,
-                'type'     => 'string',
-            ],
-          ]
+          'args' => array(
+			'user_login' => array(
+				'required'  => null,
+			),
+			'user_password' => array(
+				'required'  => null,
+            ),
+		  ),
         ));
     }
     
-    public static function rest_streamer_endpoint_login(WP_REST_Request $request ){
+    public static function rest_streamer_endpoint_login($request){
         self::$errors = new \WP_Error();
         if ( empty($_REQUEST['log']) || empty($_REQUEST['pwd']) ):
             self::$errors->add( 'login_empty', __('Username and password fields cant be empty!', 'wp-streamers') );
