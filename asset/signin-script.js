@@ -78,12 +78,8 @@ var signInConfig = window["endpointStreamerSignIn"];
 var streamerLogin = {
   get_params: function () {
     var arrayResult = {};
-    arrayResult["user_login"] = document.getElementById(
-      "streamer_user_login"
-    ).value;
-    arrayResult["user_password"] = document.getElementById(
-      "streamer_user_pass"
-    ).value;
+    arrayResult["log"] = document.getElementById("streamer_user_login").value;
+    arrayResult["pwd"] = document.getElementById("streamer_user_pass").value;
 
     arrayResult["rememberme"] = document.getElementById("rememberme").value;
 
