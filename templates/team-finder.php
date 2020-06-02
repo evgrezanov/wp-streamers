@@ -4,7 +4,7 @@
     <div class="col-12">
         <div id="teamFinderAddResponse">
         </div>
-        <div>
+        <div class="">
             <form id="team-finder-add-new" type="POST">
                 <div class="form-row align-items-center">
                     <div class="col-auto">
@@ -63,15 +63,24 @@
                         </select>
                     </div>
                     <div class="col-auto">
+                        <h8>Team name</h8>
                         <input type="text" class="form-control" id="team-name" name="team-name" value="" required>
                     </div>
                     <div class="col-auto">
                         <input type="hidden" id="user-id" name="user-id"
                             value="<?php echo is_user_logged_in() ? get_current_user_id() : ''?>">
-                        <input class="btn btn-primary" id="add-new-team-finder" type="submit"
-                            value="<?=__('Add new team', 'wp-streamer')?>">
-                        <input class=" btn btn-primary" id="clear-filter-team-finder" type="submit"
-                            value="<?=__('Clear filter', 'wp-streamer')?>">
+                        <div class="btn-group" role="group">
+                            <button id="team-finder-actions" type="button" class="btn btn-secondary dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <?=__('Finder actions', 'wp-streamer')?>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <input class="dropdown-item" id="add-new-team-finder" type="submit"
+                                    value="<?=__('Add team', 'wp-streamer')?>">
+                                <input class="dropdown-item" id="clear-filter-team-finder" type="submit"
+                                    value="<?=__('Clear filter', 'wp-streamer')?>">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>

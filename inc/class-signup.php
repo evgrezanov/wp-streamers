@@ -53,12 +53,36 @@ class WP_STREAMER_SIGNUP {
   
   public static function signup_modal(){
     ob_start();
+    if (is_user_logged_in()):
+      $user_data = get_userdata(get_current_user_id());
+      ?>
+<div class="elementor-button-wrapper">
+    <div class="btn-group" role="group">
+        <button id="team-finder-actions" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Hi, <?=$user_data->user_login?>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <a class="dropdown-item" href="<?= home_url().'/me'?>"><?=__('Profile', 'wp-streamer')?></a>
+            <a class="dropdown-item" href="<?=wp_logout_url( home_url() )?>">
+                <?=__('Logout', 'wp-streamers')?></a>
+        </div>
+    </div>
+    <a data-micromodal-trigger="modal-2" href='javascript:void(0);'
+        class="elementor-button-link elementor-button elementor-size-sm" role="button">
+        <span class="elementor-button-content-wrapper">
+            <span class="elementor-button-text"></span>
+        </span>
+    </a>
+</div>
+<?php
+    else:
     ?>
 <div class="elementor-button-wrapper">
     <a data-micromodal-trigger="modal-1" href='javascript:void(0);'
         class="elementor-button-link elementor-button elementor-size-sm" role="button">
         <span class="elementor-button-content-wrapper">
-            <span class="elementor-button-text">Create Account</span>
+            <span class="elementor-button-text"><?=__('Create Account', 'wp-streamer')?></span>
         </span>
     </a>
 </div>
@@ -66,11 +90,12 @@ class WP_STREAMER_SIGNUP {
     <a data-micromodal-trigger="modal-2" href='javascript:void(0);'
         class="elementor-button-link elementor-button elementor-size-sm" role="button">
         <span class="elementor-button-content-wrapper">
-            <span class="elementor-button-text">Login</span>
+            <span class="elementor-button-text"><?=__('Login', 'wp-streamer')?></span>
         </span>
     </a>
 </div>
 <?php
+endif;
     return ob_get_clean();
   }
   /**

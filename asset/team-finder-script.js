@@ -120,7 +120,6 @@ var teamFinder = {
     responseBlock.innerHTML = message;
   },
   add_team_row: function (data) {
-    //(function ($) {
     jQuery.noConflict();
     var mytable = jQuery("#team-finder").DataTable();
     mytable.search("").draw();
@@ -139,17 +138,14 @@ var teamFinder = {
         data.team_button,
       ])
       .draw();
-    //})(window.jQuery);
   },
   clear_inputs: function () {
     jQuery.noConflict();
-    //(function ($) {
     jQuery("select").each(function () {
       this.selectedIndex = 0;
     });
     var dt = jQuery("team-finder").DataTable();
     dt.search("");
-    //})(window.jQuery);
     document.getElementById("team-name").value = "";
   },
 };
@@ -161,8 +157,8 @@ document.addEventListener("DOMContentLoaded", function () {
     teamFinder.get_params()
   );
 });
+
 jQuery.noConflict();
-//(function ($) {
 // DataTable
 jQuery(document).ready(function ($) {
   var table = jQuery("#team-finder").DataTable({
@@ -181,19 +177,22 @@ jQuery(document).ready(function ($) {
   // Team type filter
   jQuery("#team-type").on("change", function () {
     selectedTeamType = jQuery("#team-type option:selected").html();
-    table.search(jQuery("#team-type option:selected").html()).draw();
+    table.column(3).search(jQuery("#team-type option:selected").html()).draw();
   });
 
   // team-region filter
   jQuery("#team-region").on("change", function () {
     selectedTeamRegion = jQuery("#team-region option:selected").html();
-    table.search(jQuery("#team-region option:selected").html()).draw();
+    table
+      .column(4)
+      .search(jQuery("#team-region option:selected").html())
+      .draw();
   });
 
   // team-rank filter
   jQuery("#team-rank").on("change", function () {
     selectedTeamRank = jQuery("#team-rank option:selected").html();
-    table.search(jQuery("#team-rank option:selected").html()).draw();
+    table.column(5).search(jQuery("#team-rank option:selected").html()).draw();
   });
 
   // team-age filter
@@ -201,22 +200,30 @@ jQuery(document).ready(function ($) {
     selectedTeamAgeRequirement = jQuery(
       "#team-age-requirement option:selected"
     ).html();
-    table.search(jQuery("#team-age-requirement option:selected").html()).draw();
+    table
+      .column(6)
+      .search(jQuery("#team-age-requirement option:selected").html())
+      .draw();
   });
 
   // team-agent filter
   jQuery("#team-agent").on("change", function () {
     selectedTeamPreferredAgent = jQuery("#team-agent option:selected").html();
-    table.search(jQuery("#team-agent option:selected").html()).draw();
+    table.column(7).search(jQuery("#team-agent option:selected").html()).draw();
+  });
+
+  // team-name filter
+  jQuery("#team-name").on("keyup change", function () {
+    table.column(2).search(this.value).draw();
   });
 
   // clear filter button
   jQuery("#clear-filter-team-finder").click(function () {
-    table.search("").draw();
     jQuery("select").each(function () {
       this.selectedIndex = 0;
     });
     jQuery("#team-name").val("");
+    table.search("").draw();
+    table.columns().search("").draw();
   });
 });
-//})(window.jQuery);
