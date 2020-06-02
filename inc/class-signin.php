@@ -13,7 +13,7 @@ class WP_STREAMER_SIGNIN {
     
     public static function assets() {
         $args = array(
-          'site-url' => 'streamers/v1/streamer/signin',
+          'site-url' => 'streamers/v1/streamer/login',
         );
     
         wp_register_script(
@@ -37,18 +37,18 @@ class WP_STREAMER_SIGNIN {
     }
 
     public static function rest_user_endpoints() {
-        register_rest_route('streamers/v1', 'streamer/signin', array(
-          'methods'   => 'POST',
-          'callback'  => [__CLASS__, 'rest_streamer_endpoint_login'],
-          'args' => array(
-			'user_login' => array(
-				'required'  => null,
-			),
-			'user_password' => array(
-				'required'  => null,
+        register_rest_route( 'streamers/v1', '/streamer/login', array(
+            'methods'  => WP_REST_Server::ALLMETHODS,
+            'callback' => [__CLASS__, 'rest_streamer_endpoint_login'],
+            'args'     => array(
+                'log' => array(
+                    'required' => true
+                ),
+                'pwd' => array(
+                    'required' => true
+                ),
             ),
-		  ),
-        ));
+        ) );
     }
     
     public static function rest_streamer_endpoint_login($request){
@@ -56,12 +56,10 @@ class WP_STREAMER_SIGNIN {
         if ( empty($_REQUEST['log']) || empty($_REQUEST['pwd']) ):
             self::$errors->add( 'login_empty', __('Username and password fields cant be empty!', 'wp-streamers') );
         else:
-            $redirect_to = esc_url_raw( $_REQUEST['redirect_to'] );
-        
-            if($redirect_to == '')
-		        $redirect_to= get_site_url(). '/me/' ; 
+		    $redirect_to= get_site_url(). '/me/' ; 
 		
-			$user = is_email( $_REQUEST['log'] ) ? get_user_by( 'email', $_REQUEST['log'] ) : get_user_by( 'login', sanitize_user( $_REQUEST['log'] ) );
+            $user = is_email( $_REQUEST['log'] ) ? get_user_by( 'email', $_REQUEST['log'] ) : get_user_by( 'login', sanitize_user( $_REQUEST['log'] ) );
+            
             if ($user):
                 $rememberme = false;
                 if ( isset($_REQUEST['rememberme']) && !empty($_REQUEST['rememberme']) ):
@@ -79,6 +77,8 @@ class WP_STREAMER_SIGNIN {
                 if ( is_wp_error($cur_user) ) :
                     self::$errors->add( $cur_user->get_error_code(), $cur_user->get_error_message() );
                 endif;
+            else:
+                self::$errors->add( 'wrong_user', 'Wrong user name or password!' );
             endif;
             
         endif;
