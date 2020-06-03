@@ -350,17 +350,16 @@ a.modal-login::after {
     </div>
 </div>
 <div class="modal micromodal-slide" id="modal-2" aria-hidden="false">
-    <div class="modal__overlay" tabindex="-1" data-custom-close="">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
         <div class="modal__container w-90 w-40-ns" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
             <header class="modal__header">
                 <h3 class="modal__title" id="modal-2-title">
                     <i class="fas fa-user pr2"></i> Login
                 </h3>
-                <button class="modal__close" aria-label="Close modal" data-custom-close=""></button>
             </header>
-            <?php    if ( is_user_logged_in() ): ?>
             <div class="modal__content" id="modal-2-content">
                 <div class="measure">
+                    <?php    if ( is_user_logged_in() ): ?>
                     <?=__('You already logged in','wp-streamers');?>
                     <p><a href="<?=wp_logout_url( home_url() )?>"><?=__('Logout', 'wp-streamers')?></a></p>
                     <?php    else: ?>
@@ -381,6 +380,12 @@ a.modal-login::after {
                                     autocomplete="off">
                                 <small id="name-desc" class="f6 black-60 db mb2">Must be at least 6 characters
                                     long.</small>
+                                <p class="login-remember">
+                                    <label>
+                                        <input name="rememberme" type="checkbox" id="rememberme" value="forever">
+                                        <?php echo __('Remember Me', 'wp-streamers');?>
+                                    </label>
+                                </p>
                             </div>
                         </div>
                         <footer class="modal__footer">
@@ -394,56 +399,9 @@ a.modal-login::after {
                     <?php    endif; ?>
                 </div>
             </div>
+            <footer class="modal__footer">
+                <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
+            </footer>
         </div>
-        <div class="modal micromodal-slide" id="modal-login" aria-hidden="true">
-            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-                <div id="modal-container" class="modal__container" role="dialog" aria-modal="true"
-                    aria-labelledby="modal-1-title">
-                    <header id="modal-header" class="modal__header">
-                        <h2 class="modal__title">
-                            Login
-                        </h2>
-                        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
-                    </header>
-                    <div id="modal-content-content" class="modal-content-content">
-                        <div id="modal-content" class="modal__content">
-                            <div class="row">
-                                <div class="col-12 text-center">
-                                    <?php    if ( !is_user_logged_in() ):
-            echo '<div id="streamerSignInResponse"></div>';
-            wp_login_form( array(
-                'echo'           => true,
-                'redirect'       => get_site_url(). '/me/' , 
-                'form_id'        => 'streamer_login_form',
-                'label_username' => __( 'Username or Email', 'wp-streamers' ),
-                'label_password' => __( 'Password', 'wp-streamers' ),
-                'label_remember' => __( 'Remember Me', 'wp-streamers' ),
-                'label_log_in'   => __( 'Log In', 'wp-streamers' ),
-                'id_username'    => 'streamer_user_login',
-                'id_password'    => 'streamer_user_pass',
-                'id_remember'    => 'rememberme',
-                'id_submit'      => 'streamer_login_submit',
-                'remember'       => true,
-                'value_username' => NULL,
-                'value_remember' => false 
-            ) );
-            echo '<br>';
-            echo '<a href="'.esc_url( wp_lostpassword_url( home_url() ) ).'">'.__('Lost Password?','wp-streamers').'</a>';
-            //require_once plugin_dir_path(__DIR__).'templates/signin.php';
-        else:    
-            echo __('You already logged in','wp-streamers');
-            echo '<br>';
-            echo '<a href="'.wp_logout_url( home_url() ).'">'.__('Logout', 'wp-streamers').'</a>';
-        endif;?>
-                                </div>
-                            </div>
-                        </div>
-                        <footer class="modal__footer">
-                            <button class="modal__btn modal__btn-primary">Continue</button>
-                            <button class="modal__btn" data-micromodal-close
-                                aria-label="Close this dialog window">Close</button>
-                        </footer>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
+</div>

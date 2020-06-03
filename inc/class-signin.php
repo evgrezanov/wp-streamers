@@ -132,7 +132,6 @@ class WP_STREAMER_SIGNIN {
             ) );
             echo '<br>';
             echo '<a href="'.esc_url( wp_lostpassword_url( home_url() ) ).'">'.__('Lost Password?','wp-streamers').'</a>';
-            //require_once plugin_dir_path(__DIR__).'templates/signin.php';
         else:    
             echo __('You already logged in','wp-streamers');
             echo '<br>';

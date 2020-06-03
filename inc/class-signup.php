@@ -73,20 +73,18 @@ class WP_STREAMER_SIGNUP {
     else:
     ?>
 <div class="elementor-button-wrapper">
-    <a data-micromodal-trigger="modal-1" href='javascript:void(0);'
-        class="elementor-button-link elementor-button elementor-size-sm" role="button">
-        <span class="elementor-button-content-wrapper">
-            <span class="elementor-button-text"><?=__('Create Account', 'wp-streamer')?></span>
-        </span>
-    </a>
-</div>
-<div class="elementor-button-wrapper">
-    <a data-micromodal-trigger="modal-2" href='javascript:void(0);'
-        class="elementor-button-link elementor-button elementor-size-sm" role="button">
-        <span class="elementor-button-content-wrapper">
-            <span class="elementor-button-text"><?=__('Login', 'wp-streamer')?></span>
-        </span>
-    </a>
+    <div class="btn-group" role="group">
+        <button id="team-finder-actions" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Hi, Sign In now
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <a class="dropdown-item" data-micromodal-trigger="modal-1"
+                href='javascript:void(0);'><?=__('Create Account', 'wp-streamer')?></a>
+            <a class="dropdown-item" data-micromodal-trigger="modal-2" href='javascript:void(0);'>
+                <?=__('Login', 'wp-streamer')?></a>
+        </div>
+    </div>
 </div>
 <?php
 endif;
