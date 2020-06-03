@@ -1,10 +1,30 @@
 <style>
-/**************************
-  Basic Modal Styles
-**************************/
+/*
+* > normalize.css
+* > https://unpkg.com/tachyons/css/tachyons.min.css (https://tachyons.io/)
+*
+*/
+
+@import url("https://fonts.googleapis.com/css?family=Lato&display=swap");
+
+/**************************\
+Basic Modal Styles
+\**************************/
+
+body {
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, avenir next, avenir,
+        helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+}
+
+.demo-wrapper {
+    width: 100px;
+    padding: 20px;
+    margin: 0 auto;
+}
 
 .modal {
-    font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+    font-family: "Lato", -apple-system, BlinkMacSystemFont, avenir next, avenir,
+        helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
 }
 
 .modal__overlay {
@@ -13,50 +33,29 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10;
 }
 
 .modal__container {
-    background-color: transparent;
-    padding: 0px;
-    max-width: 740px;
-    height: 75vh;
-    width: 50%;
-    border-radius: 0px;
-    overflow: hidden;
+    background-color: #fff;
+    padding: 30px;
+    max-width: 500px;
+    max-height: 100vh;
+    border-radius: 4px;
+    overflow-y: auto;
     box-sizing: border-box;
 }
 
 .modal__header {
-    position: relative;
-    display: block;
-    height: 30px;
-    margin-bottom: 0px;
-    padding: 30px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    background: #D3D3D3;
-}
-
-@supports (display: flex) {
-
-    .modal__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: initial;
-    }
-
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .modal__title {
-    position: absolute;
-    top: 20px;
-    left: 20px;
     margin-top: 0;
     margin-bottom: 0;
     font-weight: 600;
@@ -67,60 +66,30 @@
 }
 
 .modal__close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
     background: transparent;
     border: 0;
-    cursor: pointer;
-    margin: 0px;
-    padding: 0px;
-}
-
-@supports (display: flex) {
-
-    .modal__title {
-        position: static;
-    }
-
-    .modal__close {
-        position: static;
-    }
-
 }
 
 .modal__header .modal__close:before {
     content: "\2715";
 }
 
-.modal-content-content {
-    padding: 30px;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    background: #fff;
-}
-
 .modal__content {
-    margin: 0px 0px 20px 0px;
-    color: rgba(0, 0, 0, .8);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0px 20px 0px 0px;
-}
-
-.modal__content p {
-    margin-top: 0px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .modal__btn {
-    font-size: .875rem;
+    font-size: 0.875rem;
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: .5rem;
-    padding-bottom: .5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     background-color: #e6e6e6;
-    color: rgba(0, 0, 0, .8);
-    border-radius: .25rem;
+    color: rgba(0, 0, 0, 0.8);
+    border-radius: 0.25rem;
     border-style: none;
     border-width: 0;
     cursor: pointer;
@@ -135,9 +104,15 @@
     backface-visibility: hidden;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
-    transition: -webkit-transform .25s ease-out;
-    transition: transform .25s ease-out;
-    transition: transform .25s ease-out, -webkit-transform .25s ease-out;
+    transition: -webkit-transform 0.25s ease-out;
+    transition: transform 0.25s ease-out;
+    transition: transform 0.25s ease-out, -webkit-transform 0.25s ease-out;
+}
+
+.modal__btn:focus,
+.modal__btn:hover {
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 .modal__btn-primary {
@@ -145,10 +120,9 @@
     color: #fff;
 }
 
-/**************************
-  Demo Animation Style
-**************************/
-
+/**************************\
+Demo Animation Style
+\**************************/
 @keyframes mmfadeIn {
     from {
         opacity: 0;
@@ -198,19 +172,19 @@
 }
 
 .micromodal-slide[aria-hidden="false"] .modal__overlay {
-    animation: mmfadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    animation: mmfadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .micromodal-slide[aria-hidden="false"] .modal__container {
-    animation: mmslideIn .3s cubic-bezier(0, 0, .2, 1);
+    animation: mmslideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .micromodal-slide[aria-hidden="true"] .modal__overlay {
-    animation: mmfadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+    animation: mmfadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .micromodal-slide[aria-hidden="true"] .modal__container {
-    animation: mmslideOut .3s cubic-bezier(0, 0, .2, 1);
+    animation: mmslideOut 0.3s cubic-bezier(0, 0, 0.2, 1);
 }
 
 .micromodal-slide .modal__container,
@@ -218,83 +192,31 @@
     will-change: transform;
 }
 
-/**************************
-  Custom styles for individual modals
-**************************/
+/**************************\
+Button Style
+\**************************/
 
-.modal__container button {
-    outline: none;
-    cursor: pointer !important;
-}
-
-.modal__container h2.modal__title {
-    color: #595959;
-}
-
-.modal__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal__title {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-weight: 600;
-    font-size: 1.25rem;
-    line-height: 1.25;
-    color: #00449e;
-    box-sizing: border-box;
-}
-
-.modal__close {
-    font-size: 24px;
-}
-
-.modal__content {
-    color: rgba(0, 0, 0, .8);
-}
-
-.modal__btn {
-    padding: 10px 15px;
-    background-color: #e6e6e6;
+a.modal-login {
+    position: relative;
+    display: inline-block;
+    padding: 1em 2em;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    color: black;
+    background: #cecece;
     border-radius: 4px;
-    -webkit-appearance: none;
 }
 
-/**************************
-  Mobile custom styles for individual modals
-**************************/
-
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
-
-    .modal__container {
-        width: 90% !important;
-        min-width: 90% !important;
-    }
-
-    @supports (display: flex) {
-
-        .modal__container {
-            width: 90% !important;
-            min-width: 90% !important;
-            height: 85vh;
-        }
-
-    }
-
-    .modal__header {
-        padding: 20px;
-    }
-
-    .modal-content-content {
-        padding: 20px;
-    }
-
-    .modal__content {
-        -webkit-overflow-scrolling: touch;
-    }
-
+a.modal-login::after {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.2s ease;
+    font-weight: bold;
+    letter-spacing: 0.01em;
+    will-change: transform;
+    transform: translateY(var(--ty, 0)) rotateX(var(--rx, 0)) rotateY(var(--ry, 0));
 }
 </style>
 <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
@@ -427,21 +349,67 @@
         </div>
     </div>
 </div>
-<div class="modal micromodal-slide" id="modal-2" aria-hidden="true">
-    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-        <div id="modal-container" class="modal__container" role="dialog" aria-modal="true"
-            aria-labelledby="modal-1-title">
-            <header id="modal-header" class="modal__header">
-                <h2 class="modal__title">
-                    Login
-                </h2>
-                <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+<div class="modal micromodal-slide" id="modal-2" aria-hidden="false">
+    <div class="modal__overlay" tabindex="-1" data-custom-close="">
+        <div class="modal__container w-90 w-40-ns" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
+            <header class="modal__header">
+                <h3 class="modal__title" id="modal-2-title">
+                    <i class="fas fa-user pr2"></i> Login
+                </h3>
+                <button class="modal__close" aria-label="Close modal" data-custom-close=""></button>
             </header>
-            <div id="modal-content-content" class="modal-content-content">
-                <div id="modal-content" class="modal__content">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <?php    if ( !is_user_logged_in() ):
+            <?php    if ( is_user_logged_in() ): ?>
+            <div class="modal__content" id="modal-2-content">
+                <div class="measure">
+                    <?=__('You already logged in','wp-streamers');?>
+                    <p><a href="<?=wp_logout_url( home_url() )?>"><?=__('Logout', 'wp-streamers')?></a></p>
+                    <?php    else: ?>
+                    <form id="streamer_login_form" class="black-80" action="/">
+                        <div id="streamerSignInResponse"></div>
+                        <div class="modal__content" id="modal-2-content">
+                            <div class="measure">
+                                <label for="email" class="f6 b db mb2 js-email">Login or Email</label>
+                                <input name="log" id="streamer_user_login"
+                                    class="input-reset ba b--black-20 pa2 mb2 db w-100 js-emailInput" type="text"
+                                    autocomplete="off">
+                                <label for="password" class="f6 b db mb2 mt3">Password <span
+                                        class="normal black-60">(required)</span>
+
+                                </label>
+                                <input name="pwd" id="streamer_user_pass"
+                                    class="input-reset ba b--black-20 pa2 mb2 db w-100" type="password" required=""
+                                    autocomplete="off">
+                                <small id="name-desc" class="f6 black-60 db mb2">Must be at least 6 characters
+                                    long.</small>
+                            </div>
+                        </div>
+                        <footer class="modal__footer">
+                            <input type="submit" id="streamer_login_submit" class="modal__btn modal__btn-primary"
+                                value="Login">
+                            <a class="f6 ml2 dark-blue no-underline underline-hover"
+                                href="<?=esc_url( wp_lostpassword_url( home_url() ) )?>" aria-label="Reset password"
+                                data-custom-close><?=__('Lost Password?','wp-streamers')?></a>
+                        </footer>
+                    </form>
+                    <?php    endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="modal micromodal-slide" id="modal-login" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+                <div id="modal-container" class="modal__container" role="dialog" aria-modal="true"
+                    aria-labelledby="modal-1-title">
+                    <header id="modal-header" class="modal__header">
+                        <h2 class="modal__title">
+                            Login
+                        </h2>
+                        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+                    </header>
+                    <div id="modal-content-content" class="modal-content-content">
+                        <div id="modal-content" class="modal__content">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <?php    if ( !is_user_logged_in() ):
             echo '<div id="streamerSignInResponse"></div>';
             wp_login_form( array(
                 'echo'           => true,
@@ -467,15 +435,15 @@
             echo '<br>';
             echo '<a href="'.wp_logout_url( home_url() ).'">'.__('Logout', 'wp-streamers').'</a>';
         endif;?>
+                                </div>
+                            </div>
                         </div>
+                        <footer class="modal__footer">
+                            <button class="modal__btn modal__btn-primary">Continue</button>
+                            <button class="modal__btn" data-micromodal-close
+                                aria-label="Close this dialog window">Close</button>
+                        </footer>
                     </div>
                 </div>
-                <footer class="modal__footer">
-                    <button class="modal__btn modal__btn-primary">Continue</button>
-                    <button class="modal__btn" data-micromodal-close
-                        aria-label="Close this dialog window">Close</button>
-                </footer>
             </div>
         </div>
-    </div>
-</div>

@@ -68,12 +68,6 @@ class WP_STREAMER_SIGNUP {
                 <?=__('Logout', 'wp-streamers')?></a>
         </div>
     </div>
-    <a data-micromodal-trigger="modal-2" href='javascript:void(0);'
-        class="elementor-button-link elementor-button elementor-size-sm" role="button">
-        <span class="elementor-button-content-wrapper">
-            <span class="elementor-button-text"></span>
-        </span>
-    </a>
 </div>
 <?php
     else:
